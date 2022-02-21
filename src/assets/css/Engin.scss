@@ -1,0 +1,147 @@
+.engin{
+  .el-col-24{
+    padding: 20px;
+    .el-col-24{
+      padding: 0;
+      margin-top: 20px;
+    }
+  }
+  width: 98%;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #fff;
+  .el-form{
+    .el-input{
+      float: left;
+      .el-input__inner{
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+    }
+    .el-button{
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+      background: #F6F6F6;
+      color: #9E9E9E;
+      i{
+        font-weight: bold;
+      }
+    }
+  }
+  .el-col-18{
+    button{
+      margin-left: 20px;
+    }
+  }
+  .switchStyle .el-switch__label {
+    position: absolute;
+    display: none;
+    color: #fff;
+  }
+  .switchStyle .el-switch__label--left {
+    z-index: 9;
+    left: 20px;
+  }
+  .switchStyle .el-switch__label--right {
+    z-index: 9;
+    left: -4px;
+  }
+  .switchStyle .el-switch__label.is-active {
+    display: block;
+  }
+  .switchStyle.el-switch .el-switch__core,
+  .el-switch .el-switch__label {
+    width: 50px !important;
+  }
+  td .next-table{
+    width: 95% !important;
+    margin: 0 auto;
+    table .has-gutter tr th.el-table__cell{
+      background: #FAFAFA !important;
+    }
+    table tr.el-table__row{
+      background: #FAFAFA !important;
+    }
+    .next-table-next{
+      table .has-gutter tr th.el-table__cell{
+        background: #ffffff !important;
+      }
+      table tr.el-table__row{
+        background: #ffffff !important;
+      }
+    }
+  }
+  .add-call{
+    background: #9A83DA !important;
+    border-color: #9A83DA !important;
+  }
+  table th div.cell{
+    color: #1899EE;
+
+  }
+  .el-pagination{
+    overflow: hidden;
+    margin-left: 20px;
+  }
+  .el-dialog__header{
+    background: #2FA1ED;
+    color: #fff;
+    .el-dialog__title{
+      color: #fff;
+    }
+    .el-dialog__headerbtn .el-dialog__close{
+      color: #fff;
+    }
+  }
+  .baojing{
+    label{
+      display: block;
+      width: 100% !important;
+      text-align: left;
+    }
+    .el-form-item__content{
+      width: 90%;
+      margin: 0 !important;
+      overflow: hidden;
+      .el-checkbox{
+        width: 30% !important;
+        float: left;
+        margin-right: 0px !important;
+      }
+    }
+    .el-col-24{
+      margin-bottom: 0;
+      padding: 0;
+    }
+    .call_phone{
+      button{
+        float: right;
+        padding: 6px;
+        border-radius: 0;
+        margin-right: 4px;
+        font-size: 14px;
+        width: 20px;
+        height: 20px;
+        margin-top: 10px;
+        line-height: 4px;
+      }
+      .el-col-24{
+        margin-top: 4px;
+      }
+    }
+  }
+  .call-form-data{
+    .el-col-24{
+      margin-bottom: 0;
+      padding: 0;
+
+      .el-input{
+        text-indent: 0;
+        width: 220px;
+      }
+    }
+    .fa{
+      text-indent: 1.5em;
+    }
+  }
+}
