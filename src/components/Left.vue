@@ -18,9 +18,10 @@
                 <template slot="title"><i class="iconfont icon-shipinjiankong"></i><span slot="title">监控工作台</span></template>
                 <router-link to="/monitoringview"><el-menu-item index="3-1"><i class="iconfont icon-guanli"></i>监控视图</el-menu-item></router-link>
                 <router-link to="/curve"><el-menu-item index="3-2"><i class="iconfont icon-frequency"></i>曲线报表</el-menu-item></router-link>
-                <router-link to="/calldata"><el-menu-item index="3-3"><i class="iconfont icon-baojingjilu"></i>报警记录</el-menu-item></router-link>
-                <router-link to="/controldata"><el-menu-item index="3-4"><i class="iconfont icon-kongzhi"></i>控制记录</el-menu-item></router-link>
-                <router-link to="/joindata"><el-menu-item index="3-5"><i class="iconfont icon-guanlian"></i>联控记录</el-menu-item></router-link>
+                <router-link to="/historys"><el-menu-item index="3-2"><i class="el-icon-time"></i>历史记录</el-menu-item></router-link>
+                <!--<router-link to="/calldata"><el-menu-item index="3-3"><i class="iconfont icon-baojingjilu"></i>报警记录</el-menu-item></router-link>-->
+                <!--<router-link to="/controldata"><el-menu-item index="3-4"><i class="iconfont icon-kongzhi"></i>控制记录</el-menu-item></router-link>-->
+                <!--<router-link to="/joindata"><el-menu-item index="3-5"><i class="iconfont icon-guanlian"></i>联控记录</el-menu-item></router-link>-->
                 <router-link to="/gatewayonline"><el-menu-item index="3-6"><i class="iconfont icon-wangguan"></i>网关在线状态</el-menu-item></router-link>
             </el-submenu>
             <el-submenu index="4">

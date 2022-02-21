@@ -12,13 +12,14 @@ import Message from '../views/Message.vue' //信息管理页
 import Systemset from '../views/Systemset.vue' //系统设置页
 import Api from '../views/Api.vue' //api管理页
 import Curve from '../views/Curve.vue' //曲线报表页
-import CallData from '../views/CallData.vue' //报警记录页
-import ControlData from '../views/ControlData.vue' //控制记录页
-import JoinData from '../views/JoinData.vue' //联控记录页
+// import CallData from '../views/CallData.vue' //报警记录页
+// import ControlData from '../views/ControlData.vue' //控制记录页
+// import JoinData from '../views/JoinData.vue' //联控记录页
 import GatewayOnline from '../views/GatewayOnline.vue' //网关在线状态页
 import MonitoringView from '../views/MonitoringView.vue' //监控视图页
 import Monitoring from '../views/Monitoring.vue' //监控视图管理页
 import MonitoringData from '../views/MonitoringData.vue' //监控视图列表页
+import Historys from '../views/Historys.vue' //监控视图列表页
 
 Vue.use(VueRouter);
 
@@ -113,25 +114,11 @@ const routes = [
                     title: '曲线报表'
                 }
             }, {
-                path: '/calldata',
-                name: 'calldata',
-                component: CallData,
+                path: '/historys',
+                name: 'historys',
+                component: Historys,
                 meta: {
-                    title: '报警记录'
-                }
-            },{
-                path: '/controldata',
-                name: 'controldata',
-                component: ControlData,
-                meta: {
-                    title: '控制记录'
-                }
-            },{
-                path: '/joindata',
-                name: 'joindata',
-                component: JoinData,
-                meta: {
-                    title: '联控记录'
+                    title: '历史记录'
                 }
             },{
                 path: '/gatewayonline',

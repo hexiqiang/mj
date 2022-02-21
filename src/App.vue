@@ -3,7 +3,9 @@
     <router-view  v-wechat-title="$route.meta.title" />
   </div>
 </template>
+<script>
 
+</script>
 <style lang="scss">
   body{
     margin: 0;
