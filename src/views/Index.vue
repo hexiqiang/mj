@@ -10,14 +10,8 @@
                     <el-row>
                         <el-col :span="24">
                             <div class="grid-content bg-purple-dark">
-                                <el-tag closable size="mini" type="info">
-                                    首页
-                                </el-tag>
-                                <el-tag closable  size="mini">
-                                    首页
-                                </el-tag>
-                                <el-tag closable size="mini">
-                                    首页
+                                <el-tag v-for="(item, index) in navs" :key="index" closable size="mini" type="info">
+                                    <router-link :to="item.path">{{item.name}}</router-link>
                                 </el-tag>
                             </div>
                         </el-col>
@@ -38,6 +32,7 @@
         data() {
             return {
                 isCollapse: false,
+                navs: JSON.parse(sessionStorage.getItem('navs'))
             }
         },
         components:{
@@ -67,6 +62,11 @@
                     this.isCollapse = true
                 }
             },
+        },
+        mounted() {
+            console.log(this.navs)
+        },
+        computed:{
         }
     }
 </script>
@@ -75,6 +75,10 @@
 .home{
     .el-main{
         position: relative;
+        a{
+            text-decoration: none;
+            color: #3CB1FF;
+        }
     }
 }
 

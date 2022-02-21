@@ -9,8 +9,8 @@
             </router-link>
             <el-submenu index="2">
                 <template slot="title"><i class="iconfont icon-a-gongchengmaogongchengshianquanmaoanquantoukui"></i><span slot="title">工程管理</span></template>
-                <router-link to="/engin"><el-menu-item index="2-1"><i class="iconfont icon-guanli"></i>工程管理</el-menu-item></router-link>
-                <router-link to="/monitoringdata"><el-menu-item index="2-2"><i class="iconfont icon-frequency"></i>监控视图管理</el-menu-item></router-link>
+                <el-menu-item index="2-1" @click="goNavs('/engin', '工程管理')"><i class="iconfont icon-guanli"></i>工程管理</el-menu-item>
+                <el-menu-item index="2-2" @click="goNavs('/monitoringdata', '监控视图管理')"><i class="iconfont icon-frequency"></i>监控视图管理</el-menu-item>
                 <router-link to="/called"><el-menu-item index="2-3"><i class="iconfont icon-gbaojings"></i>报警管理</el-menu-item></router-link>
                 <router-link to="/joint"><el-menu-item index="2-4"><i class="iconfont icon-guanlian"></i>联控管理</el-menu-item></router-link>
             </el-submenu>
@@ -39,7 +39,9 @@
     export default {
         data(){
             return{
-                disable: true
+                disable: true,
+                tabNav: [],
+                navs: [{path: '/home', name: '首页'}]
             }
         },
         props:['isCollapse'],
@@ -50,7 +52,23 @@
             handleClose(key, keyPath) {
                 this.$emit('closefn',key, keyPath);
             },
-
+            goNavs(path,name){
+                let showNavs = this.navs;
+                let _nav = {path: path, name: name};
+                var res = showNavs.some(item=>{
+                    if(item.name==_nav.name){
+                        return true
+                    }
+                });
+                console.log(res) // 如果arr数组对象中含有name:'张三',就会返回true，否则返回false
+                if(!res){ // 如果存在
+                         // do something
+                    this.navs.push(_nav);
+                    sessionStorage.setItem('navs',JSON.stringify(this.navs));
+                }
+            }
+        },
+        created() {
         }
     }
 </script>

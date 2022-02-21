@@ -22,7 +22,10 @@ import MonitoringData from '../views/MonitoringData.vue' //监控视图列表页
 import Historys from '../views/Historys.vue' //监控视图列表页
 
 Vue.use(VueRouter);
-
+const originalPush = VueRouter.prototype.push;
+VueRouter.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => err)
+}
 const routes = [
     {
         path: '/',
