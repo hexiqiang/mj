@@ -4,13 +4,19 @@
         <Header @openNav="openNav" @loginOut="loginOut" :isCollapse="isCollapse"/>
         <el-container style="height: 93.8vh;">
             <!--加载左侧菜单栏-->
-            <Left :isCollapse="isCollapse" @openfn="openFn" @closefn="closeFn"/>
+            <Left :isCollapse="isCollapse" @openfn="openFn" @closefn="closeFn" @fun="getNavs"/>
             <el-container>
                 <el-main>
                     <el-row>
                         <el-col :span="24">
                             <div class="grid-content bg-purple-dark">
-                                <el-tag v-for="(item, index) in navs" :key="index" closable size="mini" type="info">
+                                <el-tag v-for="(item, index) in navs"
+                                        :key="index"
+                                        size="mini"
+                                        :type="index == navsIndex ? '' : 'info'"
+                                        @click="selectTag(index)"
+                                        :closable="disable"
+                                        @close="cl(index)">
                                     <router-link :to="item.path">{{item.name}}</router-link>
                                 </el-tag>
                             </div>
@@ -30,9 +36,13 @@
     export default {
         name: 'Home',
         data() {
+            const navsIndex = sessionStorage.getItem('navs') ? JSON.parse(sessionStorage.getItem('navs')).length - 1 : 0;
             return {
                 isCollapse: false,
-                navs: JSON.parse(sessionStorage.getItem('navs'))
+                disable: true,
+                type: 'info',
+                navs: JSON.parse(sessionStorage.getItem('navs')) ? JSON.parse(sessionStorage.getItem('navs')) : [{path: '/home', name: '首页'}],
+                navsIndex: navsIndex
             }
         },
         components:{
@@ -62,12 +72,29 @@
                     this.isCollapse = true
                 }
             },
+            getNavs(data){
+                console.log(data)
+                this.navs = data;
+            },
+            selectTag(index){
+                console.log(index)
+            },
+            cl(index){
+                this.navs.splice(index, 1);
+                if (index - 1 >= 0){
+                    console.log(index,222222)
+                    this.navsIndex = index-1
+                    var url = this.navs[index - 1].path;
+                    this.$router.push(url)
+                }else{
+                    console.log(index, 111111)
+                    this.navsIndex = 1;
+                    var url = this.navs[0].path;
+                    this.$router.push(url)
+                }
+
+            }
         },
-        mounted() {
-            console.log(this.navs)
-        },
-        computed:{
-        }
     }
 </script>
 <style lang="scss">

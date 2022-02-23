@@ -1,7 +1,7 @@
 <template>
     <div class="api_column">
         <el-col :span="24">
-            <el-descriptions class="margin-top" title="api文档相关信息" :column="1" :size="size" border>
+            <el-descriptions class="margin-top" title="api文档相关信息" :column="1"  border>
                 <el-descriptions-item>
                     <template slot="label">
                         接口调用密钥

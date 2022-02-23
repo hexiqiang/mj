@@ -12,7 +12,7 @@
                 </el-form>
             </el-col>
             <el-col :span="18">
-                <el-button type="primary" @click="dialogFormVisible = true">添加</el-button>
+                <el-button type="primary" @click="dialogForm">添加</el-button>
                 <el-button type="danger">删除</el-button>
                 <el-button type="primary" @click="clickRefresh">刷新</el-button>
             </el-col>
@@ -102,30 +102,28 @@
 
         </el-col>
         <el-dialog class="baojing" title="添加用户" :visible.sync="dialogFormVisible">
-            <el-form :model="formData" ref="formData" >
+            <el-form :model="formData" ref="formData" :rules="rules">
                 <el-col :span="24">
                     <el-col :span="8">
-                        <el-form-item label="用户账号"  :required="true">
-                            <el-input v-model="formData.member" autocomplete="off"></el-input>
+                        <el-form-item label="用户账号"  :required="true" prop="member">
+                            <el-input v-model="formData.member"  placeholder="输入账号"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="电话" :required="true" >
-                            <el-input v-model="formData.phone" autocomplete="off"></el-input>
+                        <el-form-item label="密码" :required="true"  prop="password">
+                            <el-input v-model="formData.password"  show-password  placeholder="输入登录密码" ></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="是否管理员" class="call_phone">
-                            <el-switch class="switchStyle" v-model="formData.is_admin" active-color="#1899EE" active-text="是"
-                                       inactive-color="#DBE0E6" inactive-text="否">
-                            </el-switch>
+                        <el-form-item label="电话" :required="true" prop="phone">
+                            <el-input v-model="formData.phone" placeholder="请输入电话号码"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-col>
                 <el-col :span="24">
                     <el-col :span="8">
                         <el-form-item label="邮箱">
-                            <el-input v-model="formData.mail" autocomplete="off"></el-input>
+                            <el-input v-model="formData.email" autocomplete="off"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
@@ -134,17 +132,26 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="8">
-                        <el-form-item label="状态"  class="call_phone">
-                            <el-switch class="switchStyle" v-model="formData.status" active-color="#1899EE" active-text="正常"
-                                       inactive-color="#DBE0E6" inactive-text="停用">
-                            </el-switch>
-                        </el-form-item>
+                        <el-col :span="12">
+                            <el-form-item label="是否管理员" class="call_phone">
+                                <el-switch class="switchStyle" v-model="formData.is_admin" active-color="#1899EE" active-text="是"
+                                           inactive-color="#DBE0E6" inactive-text="否">
+                                </el-switch>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="状态"  class="call_phone">
+                                <el-switch class="switchStyle" v-model="formData.status" active-color="#1899EE" active-text="正常"
+                                           inactive-color="#DBE0E6" inactive-text="停用">
+                                </el-switch>
+                            </el-form-item>
+                        </el-col>
                     </el-col>
                 </el-col>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="onAdd">保存</el-button>
+                <el-button type="primary" @click="onAdd('formData')">保存</el-button>
             </div>
         </el-dialog>
         <el-dialog class="baojing" width="33%" title="工程管理" :visible.sync="userProject">
@@ -181,6 +188,8 @@
 </template>
 
 <script>
+    import { postUser, getMembers, editUser} from "../api/apis";
+
     export default {
         name: "User",
         data(){
@@ -195,9 +204,25 @@
                     member: '',
                     phone: '',
                     is_admin: false,
-                    mail: '',
+                    email: '',
                     note: '',
+                    password: '',
                     status: true,
+                    // _csrf: '',
+                },
+                rules: {
+                    member: [
+                        { required: true, message: '请输入账号', trigger: 'blur' },
+                        { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }
+                    ],
+                    password: [
+                        { required: true, message: '请输入密码', trigger: 'blur' },
+                        { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }
+                    ],
+                    phone: [
+                        { required: true, message: '请输入电话号码', trigger: 'blur' },
+                        { min: 6, max: 12, message: '请输入电话号码', trigger: 'blur' }
+                    ],
                 },
                 currentPage4: 1,
                 tableData: [{
@@ -227,14 +252,27 @@
             }
         },
         methods:{
+            dialogForm(){
+                this.dialogFormVisible = true;
+                // getCsrf().then(data => {
+                //     if (data.code == 0){
+                //         this.formData._csrf = data.data._csrf;
+                //         console.log(data.data)
+                //     }
+                // });
+            },
             clickRefresh(){
                 this.$router.go(0)
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
+                console.log(val)
             },
             handleEdit(index, row) {
-                console.log(index, row);
+                this.dialogFormVisible = true;
+                this.formData = row;
+                this.formData.id = row.id
+                console.log(this.formData);
             },
             handleDelete(index, row) {
                 console.log(index, row);
@@ -251,9 +289,57 @@
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
             },
-            onAdd(){
-                this.dialogFormVisible = false;
-                this.tableData.push(this.formData);
+            onAdd(formName){
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.formData.is_admin = this.formData.is_admin ? 1 : 0;
+                        this.formData.status = this.formData.status ? 1 : 0;
+                        if (this.formData.id){
+                            editUser(this.formData).then(data => {
+                                // console.log(data)
+                                if (data.code == 0){
+                                    this.dialogFormVisible = false;
+                                    this.$router.go(0)
+                                    this.$message({
+                                        showClose: true,
+                                        message: data.msg,
+                                        type: 'success'
+                                    })
+                                } else{
+                                    this.$message({
+                                        showClose: true,
+                                        message: data.msg,
+                                        type: 'warning'
+                                    })
+                                }
+                            });
+                        } else{
+                            postUser(this.formData).then(data => {
+                                // console.log(data)
+                                if (data.code == 0){
+                                    this.dialogFormVisible = false;
+                                    this.$router.go(0)
+                                    this.$message({
+                                        showClose: true,
+                                        message: data.msg,
+                                        type: 'success'
+                                    })
+                                } else{
+                                    this.$message({
+                                        showClose: true,
+                                        message: data.msg,
+                                        type: 'warning'
+                                    })
+                                }
+                            });
+                        }
+
+                    } else {
+                        this.$message('请完善*号项填写');
+                        return false;
+                    }
+                });
+
             },
             addPro(){
 
@@ -281,6 +367,16 @@
                 });
                 return datas;
             }
+        },
+        mounted() {
+            getMembers().then(res => {
+                if (res.code == 0){
+                    this.tableData = res.data.data;
+                } else{
+                    this.$message(res.msg)
+                }
+
+            })
         }
     }
 </script>
