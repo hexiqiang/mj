@@ -10,6 +10,9 @@
                     <el-row>
                         <el-col :span="24">
                             <div class="grid-content bg-purple-dark">
+                                <el-tag size="mini">
+                                    <router-link to="/home">首页</router-link>
+                                </el-tag>
                                 <el-tag v-for="(item, index) in navs"
                                         :key="index"
                                         size="mini"
@@ -41,7 +44,7 @@
                 isCollapse: false,
                 disable: true,
                 type: 'info',
-                navs: JSON.parse(sessionStorage.getItem('navs')) ? JSON.parse(sessionStorage.getItem('navs')) : [{path: '/home', name: '首页'}],
+                navs: JSON.parse(sessionStorage.getItem('navs')) ? JSON.parse(sessionStorage.getItem('navs')) : [],
                 navsIndex: navsIndex
             }
         },

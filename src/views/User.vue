@@ -32,7 +32,7 @@
                     <el-table-column prop="note" sortable label="备注"></el-table-column>
                     <el-table-column prop="status" sortable  width="100"  label="状态">
                         <template slot-scope="scope">
-                            <el-switch class="switchStyle" v-model="scope.row.status" active-color="#1899EE" active-text="开启"
+                            <el-switch class="switchStyle" v-model="scope.row.status" @change="statusChange(scope.$index, scope.row)" active-color="#1899EE" active-text="开启"
                                        inactive-color="#DBE0E6" inactive-text="停用">
                             </el-switch>
                         </template>
@@ -101,7 +101,7 @@
             </el-col>
 
         </el-col>
-        <el-dialog class="baojing" title="添加用户" :visible.sync="dialogFormVisible">
+        <el-dialog class="baojing" :title="title" :visible.sync="dialogFormVisible">
             <el-form :model="formData" ref="formData" :rules="rules">
                 <el-col :span="24">
                     <el-col :span="8">
@@ -188,12 +188,13 @@
 </template>
 
 <script>
-    import { postUser, getMembers, editUser} from "../api/apis";
+    import { postUser, getMembers, editUser, delmember, changestatus} from "../api/apis";
 
     export default {
         name: "User",
         data(){
             return{
+                title: '用户',
                 form:{
                     keyword: ''
                 },
@@ -254,6 +255,7 @@
         methods:{
             dialogForm(){
                 this.dialogFormVisible = true;
+                this.title = '添加用户';
                 // getCsrf().then(data => {
                 //     if (data.code == 0){
                 //         this.formData._csrf = data.data._csrf;
@@ -270,18 +272,41 @@
             },
             handleEdit(index, row) {
                 this.dialogFormVisible = true;
+                this.title = '编辑用户';
                 this.formData = row;
-                this.formData.id = row.id
+                this.formData.id = row.id;
+                this.formData.is_admin = row.is_admin == '是' ? true : false;
                 console.log(this.formData);
             },
             handleDelete(index, row) {
-                console.log(index, row);
-            },
-            handleAdd(index, row) {
-                console.log(index, row);
-            },
-            handleDetail(index,row){
-                console.log(index, row);
+                this.$confirm('此操作将永久删除该账号, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    delmember({id: row.id}).then(res => {
+                        console.log(res);
+                        if (res.code == 0){
+                            this.tableData.splice(index,1);
+                            this.$message({
+                                type: 'success',
+                                message:  res.msg
+                            });
+
+                        } else{
+                            this.$message({
+                                type: 'warning',
+                                message: res.msg
+                            });
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
             },
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
@@ -289,6 +314,42 @@
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
             },
+            // 修改用户状态
+            statusChange(index, row){
+                console.log(index, row);
+                let status = {
+                    id: row.id,
+                    status: row.status == true ? 1 : 0
+                }
+                this.$confirm('确定修改用户状态, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    changestatus(status).then(res => {
+                        console.log(res);
+                        if (res.code == 0){
+                            this.$message({
+                                type: 'success',
+                                message: res.msg
+                            });
+
+                        } else{
+                            this.$message({
+                                type: 'warning',
+                                message:  res.msg
+                            });
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            // 编辑与添加账号
             onAdd(formName){
                 this.$refs[formName].validate((valid) => {
                     if (valid) {

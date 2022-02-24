@@ -40,7 +40,7 @@
             return{
                 disable: true,
                 tabNav: [],
-                navs: JSON.parse(sessionStorage.getItem('navs')) ? JSON.parse(sessionStorage.getItem('navs')) : [{path: '/home', name: '首页'}],
+                navs: JSON.parse(sessionStorage.getItem('navs')) ? JSON.parse(sessionStorage.getItem('navs')) : [],
                 columns: []
             }
         },
