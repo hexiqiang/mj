@@ -6,10 +6,10 @@
                 <CallData></CallData>
             </el-tab-pane>
             <el-tab-pane label="控制记录">
-                <JoinData></JoinData>
+                <ControlData></ControlData>
             </el-tab-pane>
             <el-tab-pane label="联控记录">
-                <ControlData></ControlData>
+                <JoinData></JoinData>
             </el-tab-pane>
         </el-tabs>
     </div>

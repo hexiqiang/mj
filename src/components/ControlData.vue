@@ -18,23 +18,23 @@
                         tooltip-effect="dark">
                     <el-table-column type="selection" width="55"></el-table-column>
                     <el-table-column prop="project_name" sortable label="工程"></el-table-column>
-                    <el-table-column prop="call_name" sortable label="报警设备"></el-table-column>
-                    <el-table-column prop="call_msg" sortable  label="报警信息"></el-table-column>
-                    <el-table-column prop="call_type" sortable width="120" label="报警方式"></el-table-column>
-                    <el-table-column prop="call_date" sortable width="180" label="报警时间"></el-table-column>
-                    <el-table-column prop="call_status" sortable width="120" label="报警状态"></el-table-column>
-                    <el-table-column prop="call_note" sortable width="120" label="备注"></el-table-column>
+                    <el-table-column prop="gateway_name" sortable label="设备名称"></el-table-column>
+                    <el-table-column prop="post_orders" sortable  label="发送命令"></el-table-column>
+                    <el-table-column prop="control_status" sortable width="120" label="控制状态"></el-table-column>
+                    <el-table-column prop="control_date" sortable width="180" label="控制时间"></el-table-column>
+                    <el-table-column prop="control_time" sortable width="120" label="控制耗时(ms)"></el-table-column>
+                    <el-table-column prop="note" sortable width="120" label="备注"></el-table-column>
                 </el-table>
             </el-col>
             <el-col :span="24">
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        :current-page="currentPage4"
-                        :page-sizes="[6, 6, 6, 2]"
-                        :page-size="6"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 50, 100]"
+                        :page-size="10"
                         layout="total, sizes, prev, pager, next, jumper"
-                        :total="20">
+                        :total="totalCount">
                 </el-pagination>
             </el-col>
             <el-dialog title="查询数据" :visible.sync="search" width="40%" class="call-form-data tishi">
@@ -42,30 +42,26 @@
                     <el-col :span="24">
                         <el-col :span="8">
                             <el-form-item label="工程"  :required="true">
-                                <el-select v-model="formData.project_name" placeholder="请选择工程">
-                                    <el-option label="工程一" value="工程一"></el-option>
-                                    <el-option label="工程二" value="工程二"></el-option>
-                                </el-select>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="8">
-                            <el-form-item label="应用系统名称" :required="true" >
-                                <el-select v-model="formData.system_name" placeholder="请选择">
-                                    <el-option label="系统一" value="系统一"></el-option>
-                                    <el-option label="系统二" value="系统二"></el-option>
+                                <el-select v-model="formData.pid" placeholder="请选择工程" @change="showTriggerForm">
+                                    <el-option
+                                            v-for="item in options"
+                                            :label="item.project_name"
+                                            :value="item.id"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="8">
                             <el-form-item label="设备名称" :required="true" >
-                                <el-select v-model="formData.equipment_name" placeholder="请选择">
-                                    <el-option label="设备一" value="设备一"></el-option>
-                                    <el-option label="设备二" value="设备二"></el-option>
+                                <el-select v-model="formData.gid" placeholder="请选择">
+                                    <el-option
+                                            v-for="item in gateways"
+                                            :label="item.gateway_name"
+                                            :value="item.id">
+
+                                    </el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                    </el-col>
-                    <el-col :span="24">
                         <el-col :span="8">
                             <el-form-item label="控制状态">
                                 <el-select v-model="formData.status" placeholder="请选择">
@@ -75,6 +71,8 @@
                                 </el-select>
                             </el-form-item>
                         </el-col>
+                    </el-col>
+                    <el-col :span="24">
                         <el-col :span="16">
                             <el-form-item label="选择控制时间">
                                 <el-date-picker
@@ -109,6 +107,8 @@
 </template>
 
 <script>
+    import {getControlRecord, getProjectList, getProjectGateway} from "../api/apis";
+
     export default {
         name: "ControlData",
         data(){
@@ -116,56 +116,102 @@
                 search: false,
                 loading: true,
                 daochu: false,
-                options: [{
-                    value: '从化温泉',
-                    label: '从化温泉'
-                }, {
-                    value: '惠州温泉',
-                    label: '惠州温泉'
-                }],
-                currentPage4: 1,
-                tableData: [{
-                    project_name: '从化温泉',
-                    call_name: '1#温水水池',
-                    call_msg: '1#温水水池液位低限请开泵；1#水池液位：1.71米',
-                    call_type: '短信发送',
-                    call_date: '2022-02-17 07:19:05',
-                    call_status: '报警恢复',
-                    call_note: '备注信息',
-                },{
-                    project_name: '从化温泉',
-                    call_name: '2#温水水池',
-                    call_msg: '2#温水水池液位低限请开泵；2#水池液位：1.51米',
-                    call_type: '短信发送',
-                    call_date: '2022-01-17 07:19:05',
-                    call_status: '报警恢复',
-                    call_note: '备注信息',
-                },],
+                options: [],
+                tableData: [],
+                gateways: [],
                 multipleSelection: [],
                 formData:{
-                    project_name:'',
-                    equipment_name:'',
-                    status:'',
-                    date:'',
-                }
+                    status: '',
+                    date: '',
+                    cid: '',
+                    pid: ''
+                },
+                offset: 0,
+                limit: 10,
+                currentPage: 1,
+                totalCount: 10,
+                page: 10,
+                searchFiled: {}
             }
         },
         methods:{
+            showTriggerForm(val){
+                getProjectGateway({pid: val}).then(res => {
+                    if (res.code == 0){
+                        this.gateways = res.data
+                    }
+                })
+            },
             clickRefresh(){
                 this.$router.go(0)
+            },
+            getRecord(offset, limit, field){
+                let where = {
+                    offset: this.offset,
+                    limit: this.limit,
+                };
+                if (field){
+                    Object.assign(where,field)
+                }
+                console.log(field)
+                getControlRecord(where).then(res => {
+                    if (res.code == 0){
+                        console.log(res.data);
+                        this.totalCount = Number(res.data.totalCount);
+                        this.page = res.data.page;
+                        this.tableData = res.data.data;
+                    }else{
+                        this.$message('请稍后，服务器忙！')
+                    }
+                })
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
+                let offset = 0;
+                let limit = val;
+                this.offset = offset;
+                this.limit = limit;
+                this.getRecord(this.offset, this.limit, this.searchFiled)
             },
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
+                if (val == 1){
+                    let offset = 0;
+                    this.getRecord(offset, this.limit, this.searchFiled)
+                } else{
+                    this.offset = this.limit * (val - 1);
+                    this.getRecord(this.offset, this.limit, this.searchFiled)
+                }
             },
             onSearch(){
-                console.log(this.formData)
+                if (this.formData.date.length < 2){
+                    this.$message('请选择查询日期');
+                    return;
+                }
+                let start = this.formData.date[0];
+                let end = this.formData.date[1];
+                this.searchFiled = {
+                    pid: this.formData.pid,
+                    gid: this.formData.gid,
+                    control_status: this.formData.status,
+                    start:start,
+                    end:end};
+                this.search = false;
+                this.getRecord(this.offset, this.limit, this.searchFiled)
             }
+        },
+        mounted() {
+            this.getRecord(this.offset, this.limit);
+            getProjectList().then(res => {
+                if (res.code == 0) {
+                    this.options = res.data
+                }else{
+                    this.$message(res.msg)
+                }
+            })
         }
     }
 </script>

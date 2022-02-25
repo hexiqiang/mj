@@ -9,9 +9,9 @@ export const delmember = data => post('api/user/delmember',data); //删除账号
 export const changestatus = data => post('api/user/changestatus',data); //修改用户账号状态
 
 
+export const getProjects = data => get('api/project/getprojects',data); //查询工程列表
 export const addProject = data => post('api/project/addproject',data); //添加工程
 export const editproject = data => post('api/project/editproject',data); //编辑工程
-export const getProjects = data => get('api/project/getprojects',data); //查询工程列表
 export const searchPro = data => get('api/project/searchproject',data); //查询工程列表
 export const getProjectList = data => get('api/project/getprojectlist',data); //查询所有工程
 export const delProject = data => post('api/project/delproject',data); //删除工程
@@ -48,6 +48,12 @@ export const getCloudVal = data => get('api/api/datastreamofdev',data);
 export const getProjectGateway = data => get('api/trigger/getgateway',data);
 //获取对应工程下的网关
 export const getGatewayStream = data => get('api/trigger/getstream',data);
+// 查询报警的记录
+export const getCallRecord= data => get('api/callrecord/getcallrecord',data);
+// 查询控制的记录
+export const getControlRecord = data => get('api/controlrecord/getcontrolrecord',data);
+// 查询联控的记录
+export const getJoinRecord = data => get('api/joinrecord/getjoinrecord',data);
 export default {
     getNavs
     ,getCsrf
@@ -83,4 +89,7 @@ export default {
     ,delTrigger
     ,getProjectGateway
     ,getGatewayStream
+    ,getCallRecord
+    ,getControlRecord
+    ,getJoinRecord
 }

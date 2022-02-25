@@ -98,6 +98,8 @@
 </template>
 
 <script>
+    import {getJoinRecord} from "../api/apis";
+
     export default {
         name: "JoinData",
         data(){
