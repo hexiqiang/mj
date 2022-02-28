@@ -455,7 +455,7 @@
                     addProject(this.formData).then(res => {
                         if (res.code == 0){
                             this.dialogFormVisible = false;
-                            this.$router.go(0);
+                            // this.$router.go(0);
                             this.$message({
                                 message: res.msg,
                                 type: 'success'

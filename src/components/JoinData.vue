@@ -19,7 +19,7 @@
                     <el-table-column type="selection" width="55"></el-table-column>
                     <el-table-column prop="project_name" sortable label="工程"></el-table-column>
                     <el-table-column prop="join_name" sortable label="联控名称"></el-table-column>
-                    <el-table-column prop="equipment_name" sortable  label="设备名称"></el-table-column>
+                    <el-table-column prop="gateway_name" sortable  label="设备名称"></el-table-column>
                     <el-table-column prop="join_status" sortable width="120" label="联控状态"></el-table-column>
                     <el-table-column prop="join_date" sortable width="180" label="联控时间"></el-table-column>
                 </el-table>
@@ -28,11 +28,11 @@
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        :current-page="currentPage4"
-                        :page-sizes="[6, 6, 6, 2]"
+                        :current-page="currentPage"
+                        :page-sizes="[10,20,50,100]"
                         :page-size="6"
                         layout="total, sizes, prev, pager, next, jumper"
-                        :total="20">
+                        :total="totalCount">
                 </el-pagination>
             </el-col>
             <el-dialog title="查询数据" :visible.sync="search" width="40%" class="call-form-data tishi">
@@ -40,25 +40,34 @@
                     <el-col :span="24">
                         <el-col :span="8">
                             <el-form-item label="工程"  :required="true">
-                                <el-select v-model="formData.project_name" placeholder="请选择工程">
-                                    <el-option label="怀集雅豪居供水旧改项目" value="怀集雅豪居供水旧改项目"></el-option>
-                                    <el-option label="从化温泉" value="从化温泉"></el-option>
+                                <el-select
+                                        v-model="formData.pid"
+                                        @change="changeJoin"
+                                        placeholder="请选择工程">
+                                    <el-option
+                                            v-for="item in options"
+                                            :label="item.project_name"
+                                            :value="item.id"
+                                    ></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="8">
                             <el-form-item label="联控名称" :required="true" >
-                                <el-select v-model="formData.join_name" placeholder="请选择">
-                                    <el-option label="A2栋液位联控" value="A2栋液位联控"></el-option>
-                                    <el-option label="A1栋液位联控" value="A1栋液位联控"></el-option>
+                                <el-select v-model="formData.jid" placeholder="请选择">
+                                    <el-option
+                                            v-for="item in joins"
+                                            :label="item.join_name"
+                                            :value="item.jid"
+                                    ></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="8">
                             <el-form-item label="控制状态">
                                 <el-select v-model="formData.join_status" placeholder="请选择">
-                                    <el-option label="触发" value="触发"></el-option>
-                                    <el-option label="恢复" value="恢复"></el-option>
+                                    <el-option label="触发控制" value="触发控制"></el-option>
+                                    <el-option label="恢复控制" value="恢复控制"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -98,7 +107,11 @@
 </template>
 
 <script>
-    import {getJoinRecord} from "../api/apis";
+    import {
+        getJoinRecord
+        , getProjectList
+        , getProjectJoin
+    } from "../api/apis";
 
     export default {
         name: "JoinData",
@@ -107,52 +120,104 @@
                 search: false,
                 loading: true,
                 daochu: false,
-                options: [{
-                    value: '从化温泉',
-                    label: '从化温泉'
-                }, {
-                    value: '惠州温泉',
-                    label: '惠州温泉'
-                }],
-                currentPage4: 1,
-                tableData: [{
-                    project_name: '怀集雅豪居供水旧改项目',
-                    join_name: 'A2栋液位联控',
-                    equipment_name: 'R1,',
-                    join_status: '恢复控制',
-                    join_date: '2021-12-11 16:17:00',
-                },{
-                    project_name: '怀集雅豪居供水旧改项目',
-                    join_name: 'A1栋液位联控',
-                    equipment_name: 'R1,',
-                    join_status: '触发控制',
-                    join_date: '2022-02-17 07:19:05',
-                },],
+                options: [],
+                joins:[],
+                tableData: [],
                 multipleSelection: [],
                 formData:{
-                    project_name:'',
-                    join_name:'',
+                    pid:'',
+                    jid:'',
                     join_status:'',
                     date:'',
-                }
+                },
+                offset: 0,
+                limit: 10,
+                currentPage: 1,
+                totalCount: 10,
+                page: 10,
+                searchFiled: {}
             }
         },
         methods:{
+            changeJoin(val){
+                console.log(val)
+                getProjectJoin({pid: val}).then(res => {
+                    if (res.code == 0){
+                        this.joins = res.data
+                    }
+                })
+            },
             clickRefresh(){
                 this.$router.go(0)
+            },
+            getRecord(offset, limit, field){
+                let where = {
+                    offset: this.offset,
+                    limit: this.limit,
+                };
+                if (field){
+                    Object.assign(where,field)
+                }
+                getJoinRecord(where).then(res => {
+                    if (res.code == 0){
+                        console.log(res.data);
+                        this.totalCount = Number(res.data.totalCount);
+                        this.page = res.data.page;
+                        this.tableData = res.data.data;
+                    }else{
+                        this.$message('请稍后，服务器忙！')
+                    }
+                })
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
+                let offset = 0;
+                let limit = val;
+                this.offset = offset;
+                this.limit = limit;
+                this.getRecord(this.offset, this.limit, this.searchFiled)
             },
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
+                if (val == 1){
+                    let offset = 0;
+                    this.getRecord(offset, this.limit, this.searchFiled)
+                } else{
+                    this.offset = this.limit * (val - 1);
+                    this.getRecord(this.offset, this.limit, this.searchFiled)
+                }
             },
             onSearch(){
-                console.log(this.formData)
+                if (this.formData.date.length < 2){
+                    this.$message('请选择查询日期');
+                    return;
+                }
+                console.log(this.formData);
+                let start = this.formData.date[0];
+                let end = this.formData.date[1];
+                this.searchFiled = {
+                    pid: this.formData.pid,
+                    jid: this.formData.jid,
+                    joinstatus: this.formData.join_status,
+                    start:start,
+                    end:end
+                };
+                this.search = false;
+                this.getRecord(this.offset, this.limit, this.searchFiled)
             }
+        },
+        mounted() {
+            this.getRecord(this.offset, this.limit);
+            getProjectList().then(res => {
+                if (res.code == 0) {
+                    this.options = res.data
+                }else{
+                    this.$message(res.msg)
+                }
+            })
         }
     }
 </script>

@@ -54,6 +54,10 @@ export const getCallRecord= data => get('api/callrecord/getcallrecord',data);
 export const getControlRecord = data => get('api/controlrecord/getcontrolrecord',data);
 // 查询联控的记录
 export const getJoinRecord = data => get('api/joinrecord/getjoinrecord',data);
+// 查询工程下的记录命令
+export const getProjectJoin = data => get('api/joins/getprojectjoinslist',data);
+//查询网关的在线状态
+export const getGatewayStauts = data => get('api/gatewaystatus/gatewaystatus',data);
 export default {
     getNavs
     ,getCsrf
@@ -92,4 +96,6 @@ export default {
     ,getCallRecord
     ,getControlRecord
     ,getJoinRecord
+    ,getProjectJoin
+    ,getGatewayStauts
 }
