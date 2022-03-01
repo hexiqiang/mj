@@ -147,8 +147,8 @@
             },
             getRecord(offset, limit, field){
                 let where = {
-                    offset: this.offset,
-                    limit: this.limit,
+                    offset: offset,
+                    limit: limit,
                 };
                 if (field){
                     Object.assign(where,field)

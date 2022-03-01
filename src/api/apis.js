@@ -53,6 +53,12 @@ export const editView = data => post('api/viewmanage/edit',data); //编辑
 export const getView = data => get('api/viewmanage/lists',data); //查询
 export const delView = data => post('api/viewmanage/del',data); //删除
 
+//消息管理
+export const addMessage = data => post('api/message/add',data); //添加
+export const editMessage = data => post('api/message/edit',data); //编辑
+export const getMessage = data => get('api/message/lists',data); //查询
+export const delMessage = data => post('api/message/del',data); //删除
+
 //获取数据流云变量
 export const getCloudVal = data => get('api/api/datastreamofdev',data);
 //获取对应工程下的网关
@@ -133,4 +139,8 @@ export default {
     ,getViewJoinControlList
     ,delViewJoinControl
     ,actionSearchView
+    ,addMessage
+    ,getMessage
+    ,editMessage
+    ,delMessage
 }

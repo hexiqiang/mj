@@ -9,7 +9,7 @@ if (process.env.NODE_ENV == 'development') {
 } else if (process.env.NODE_ENV == 'debug') {
     axios.defaults.baseURL = '';
 } else if (process.env.NODE_ENV == 'production') {
-    axios.defaults.baseURL = 'http://api.123dailu.com/';
+    axios.defaults.baseURL = 'http://yii.idyxy.top/?r=';
 }
 
 // 请求超时时间

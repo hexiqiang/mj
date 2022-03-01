@@ -232,7 +232,7 @@
                 if (res.code == 0){
                     this.projects = res.data
                 }
-            })
+            });
             this.getRecord(this.offset, this.limit)
         }
     }
