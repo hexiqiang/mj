@@ -2,6 +2,7 @@
   position: relative;
   .box-border{
     border:1px solid #eee;
+    position: relative;
   }
   .bm-view {
     width:100%;
@@ -10,7 +11,7 @@
   .cl-show-box-1{
     position: absolute;
     left: -14px;
-    top: 40vh;
+    top: 37vh;
     background: #242F42;
     width: 30px;
     height: 30px;
@@ -73,7 +74,7 @@
     .cl-show-box{
       position: absolute;
       left: 24px;
-      top: 20vh;
+      top: 17vh;
       background: #242F42;
       width: 30px;
       height: 30px;
@@ -100,6 +101,7 @@
     bottom: 10px;
     width: 30px;
     background: white;
+    z-index: 10;
   }
   .video-box{
     img{
@@ -159,5 +161,23 @@
         }
       }
     }
+  }
+  .form-do{
+    font-size: 30px;
+    padding: 4px 17px;
+    line-height: 30px;
+  }
+  .formUrl{
+    .el-col-5{
+      text-indent: 1em;
+    }
+    .el-col-4{
+      text-indent: 1em;
+    }
+  }
+  i.cl-close{
+    position: absolute;
+    top: 10px;
+    right: 10px;
   }
 }

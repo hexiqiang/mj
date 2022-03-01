@@ -63,7 +63,7 @@
                                 <el-button
                                         size="mini"
                                         type="danger"
-                                        @click="goNav(scope.$index, scope.row, item.view_id, '/monitoring')">视图管理</el-button>
+                                        @click="goNav(scope.$index, scope.row, item.id)">视图管理</el-button>
                             </div>
                         </template>
                     </el-table-column>
@@ -147,12 +147,13 @@
                 currentPage: 1,
                 totalCount: 10,
                 offset: 0,
-                limit: 10
+                limit: 10,
+
             }
         },
         methods:{
             goNav(index, row, vid){
-              this.$router.push({ name: 'monitoring', query: { userId: 123 }})
+              this.$router.push({ name: 'monitoring', params: { vid: vid }})
             },
             getRecord(offset, limit){
                 getView({offset: offset, limit: limit}).then(res => {

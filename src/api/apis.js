@@ -71,6 +71,15 @@ export const getProjectJoin = data => get('api/joins/getprojectjoinslist',data);
 export const getGatewayStauts = data => get('api/gatewaystatus/gatewaystatus',data);
 //查询控件的组件
 export const  getViewControl = data => get('api/viewcontrol/lists',data);
+//查询该视图的控件组件
+export const  getViewJoinControlList = data => get('api/viewmanagejoin/lists',data);
+//提交该视图的控件组件
+export const  addViewJoinControl = data => post('api/viewmanagejoin/add',data);
+//删除该视图的控件组件
+export const  delViewJoinControl = data => post('api/viewmanagejoin/del',data);
+//根据工程id查询该工程下的视图组件
+export const actionSearchView = data => get('api/viewmanage/search',data);
+getViewJoinControlList
 export default {
     getNavs
     ,getCsrf
@@ -120,4 +129,8 @@ export default {
     ,editView
     ,delView
     ,getViewControl
+    ,addViewJoinControl
+    ,getViewJoinControlList
+    ,delViewJoinControl
+    ,actionSearchView
 }

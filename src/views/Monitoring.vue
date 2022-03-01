@@ -4,7 +4,7 @@
         <div>
             <div class="right-nav-box" v-if="showNavBox">
                 <template v-for="(item, index) in controls">
-                    <div @click="selectControl(item.id)" :title="item.control_name"><i :class="item.icon"></i></div>
+                    <div @click="selectControl(item.id, item.control_name)" :title="item.control_name"><i :class="item.icon"></i></div>
                 </template>
 
                 <div class="save-data"><span>保存</span></div>
@@ -16,7 +16,8 @@
         <div class="hidden-scroll"></div>
         <el-col :span="24" class="mov-view">
             <el-col :span="24" class="mov-right">
-                <el-col :span="24" class="box-border">
+                <el-col :span="24" class="box-border" v-show="control[0].show">
+                    <i class="el-icon-close cl-close" @click="delControl(control[0].vcid, 0)"></i>
                     <p><i class="iconfont icon-sanjiao3"></i>数据展示组件</p>
                     <el-col :span="24">
                         <div class="project-box">
@@ -89,7 +90,8 @@
                         </div>
                     </el-col>
                 </el-col>
-                <el-col :span="24" class="box-border">
+                <el-col :span="24" class="box-border" v-show="control[1].show">
+                    <i class="el-icon-close cl-close" @click="delControl(control[1].vcid, 1)"></i>
                     <p><i class="iconfont icon-sanjiao3"></i>数据监控组件</p>
                     <el-col :span="24">
                         <div class="project-box data-mon">
@@ -123,7 +125,8 @@
                         </div>
                     </el-col>
                 </el-col>
-                <el-col :span="24"  class="box-border">
+                <el-col :span="24" class="box-border" v-show="control[2].show">
+                    <i class="el-icon-close cl-close" @click="delControl(control[2].vcid, 2)"></i>
                     <p><i class="iconfont icon-sanjiao3"></i>报表控件组件</p>
                     <el-col :span="24" class="stream_count">
                         <el-col :span="24">
@@ -136,7 +139,7 @@
                                                 :data="tableData"
                                                 border
                                                 @selection-change="handleSelectionChange"
-                                                :default-sort = "{order: 'descending'}"
+                                                :default-sort="{order: 'descending'}"
                                                 tooltip-effect="dark"
                                                 align="center"
                                                 style="width: 100%">
@@ -205,7 +208,7 @@
                                                         label="12">
                                                 </el-table-column>
                                             </el-table-column>
-                                            <el-table-column label="操作"  width="80">
+                                            <el-table-column label="操作" width="80">
                                                 <template slot-scope="scope">
                                                     <span>柱状图</span>
                                                 </template>
@@ -221,7 +224,7 @@
                                                 :data="tableDay"
                                                 border
                                                 @selection-change="handleSelectionChange"
-                                                :default-sort = "{order: 'descending'}"
+                                                :default-sort="{order: 'descending'}"
                                                 tooltip-effect="dark"
                                                 style="width: 100%">
                                             <el-table-column
@@ -289,7 +292,7 @@
                                                         label="12">
                                                 </el-table-column>
                                             </el-table-column>
-                                            <el-table-column label="操作"  width="80">
+                                            <el-table-column label="操作" width="80">
                                                 <template slot-scope="scope">
                                                     <span>柱状图</span>
                                                 </template>
@@ -301,35 +304,94 @@
                         </el-col>
                     </el-col>
                 </el-col>
-                <el-col :span="24" class="video-view box-border">
+                <el-col :span="24" class="video-view box-border" v-show="control[3].show">
+                    <i class="el-icon-close cl-close" @click="delControl(control[3].vcid, 3)"></i>
                     <p><i class="iconfont icon-sanjiao3"></i>地图设备定位显示组件</p>
                     <el-col :span="24">
                         <div class="mapbox">
 
-                              <baidu-map :center="center" :zoom="zoom" @ready="handler" style="height:500px" @click="getClickInfo"></baidu-map>
+                             
+                            <baidu-map :center="center" :zoom="zoom" @ready="handler" style="height:500px"
+                                       @click="getClickInfo"></baidu-map>
 
-                                <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
+                               
+                            <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
 
-                                <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_LEFT"></bm-map-type>
+                               
+                            <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']"
+                                         anchor="BMAP_ANCHOR_TOP_LEFT"></bm-map-type>
 
-                                <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true"></bm-geolocation>
+                               
+                            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true"
+                                            :autoLocation="true"></bm-geolocation>
 
-                                <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"> </bm-city-list>
+                               
+                            <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
                         </div>
                     </el-col>
                 </el-col>
-                <el-col :span="24" class="box-border">
+                <el-col :span="24" class="box-border" v-show="control[4].show">
+                    <i class="el-icon-close cl-close" @click="delControl(control[4].vcid, 4)"></i>
                     <p><i class="iconfont icon-sanjiao3"></i>文本组件</p>
                     <el-col :span="24">
-                        <el-form  ref="form" :model="formtext" label-width="80px">
-                            <el-input type="textarea" v-model="formtext.note" placeholder="请输入备注信息" @blur="postFormText" height="200px"></el-input>
+                        <el-form ref="form" :model="formtext" label-width="80px">
+                            <el-input type="textarea" v-model="formtext.note" placeholder="请输入备注信息" @blur="postFormText"
+                                      height="200px"></el-input>
                         </el-form>
                     </el-col>
                 </el-col>
-                <el-col :span="24" class="box-border">
+                <el-col :span="24" class="box-border" v-show="control[5].show">
+                    <i class="el-icon-close cl-close" @click="delControl(control[5].vcid, 5)"></i>
                     <p><i class="iconfont icon-sanjiao3"></i>监控视频组件</p>
                     <el-col :span="24" class="video-box">
                         <img src="../assets/images/video.png" alt="">
+                    </el-col>
+                </el-col>
+                <el-col :span="24" class="box-border" v-show="control[6].show">
+                    <i class="el-icon-close cl-close" @click="delControl(control[6].vcid, 6)"></i>
+                    <p><i class="iconfont icon-sanjiao3"></i>自定义链接组件</p>
+                    <el-col :span="24">
+                        <el-form ref="formUrl" :inline="true"  label-width="80px">
+                            <el-col :span="24" class="formUrl">
+                                <el-col :span="5">工程</el-col>
+                                <el-col :span="5">网关</el-col>
+                                <el-col :span="5">链接名称</el-col>
+                                <el-col :span="5">跳转地址</el-col>
+                                <el-col :span="4">操作</el-col>
+                            </el-col>
+                            <el-col :span="24">
+                                <template v-for="(item, index) in formUrl">
+                                    <el-col :span="5">
+                                        <el-form-item label="">
+                                            <el-select v-model="formUrl[index].pid" placeholder="活动区域">
+                                                <el-option label="区域一" value="shanghai"></el-option>
+                                                <el-option label="区域二" value="beijing"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="5">
+                                        <el-form-item label="">
+                                            <el-select v-model="formUrl[index].gid" placeholder="网关">
+                                                <el-option label="区域一" value="shanghai"></el-option>
+                                                <el-option label="区域二" value="beijing"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="5">
+                                        <el-form-item label="">
+                                            <el-input v-model="formUrl[index].title" placeholder="链接标题"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="5">
+                                        <el-form-item label="">
+                                            <el-input v-model="formUrl[index].url" placeholder="链接地址"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="3"><el-button class="form-do" @click="formDo('add')">+</el-button><el-button  class="form-do" @click="formDo('del', index)">-</el-button></el-col>
+                                </template>
+                                <el-button type="primary" @click="onadd" style="margin-top: 15px;">提交</el-button>
+                            </el-col>
+                        </el-form>
                     </el-col>
                 </el-col>
             </el-col>
@@ -348,12 +410,26 @@
 </template>
 
 <script>
-    import {getViewControl} from "../api/apis";
+    import {
+        getViewControl
+        ,getViewJoinControlList
+        ,addViewJoinControl
+        ,delViewJoinControl
+    } from "../api/apis";
 
     export default {
         name: "Monitoring",
-        data(){
-            return{
+        data() {
+            return {
+                control:[
+                    {title: '数据展示组件', cid:'1', show:false, vcid:''},
+                    {title: '数据监控组件',cid:'3',  show:false, vcid:''},
+                    {title: '报表控件组件', cid:'2', show:false, vcid:''},
+                    {title: '地图设备定位显示组件', cid:'5', show:false, vcid:''},
+                    {title: '文本组件', cid:'6', show:false, vcid:''},
+                    {title: '监控视频组件', cid:'4', show:false, vcid:''},
+                    {title: '自定义链接组件', cid:'7', show:false, vcid:''},
+                ],
                 showView: false,
                 activeName: 'first',
                 showNavBox: true,
@@ -430,55 +506,129 @@
                 formStatus: {
                     status: ''
                 },
-                center: {lng:0, lat:0},
-                zoom:13,
+                formUrl: [{
+                    pid: '',
+                    gid: '',
+                    title: '',
+                    url: ''
+                }],
+                center: {lng: 0, lat: 0},
+                zoom: 13,
+                setControl: [],
+                getControl: [],
+                vid: this.$route.params.vid
             }
         },
-        methods:{
+        methods: {
             handleClick(tab, event) {
                 console.log(tab, event);
             },
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            handler ({BMap, map}) {
+            handler({BMap, map}) {
                 console.log(BMap, map);
-                this.center.lng =113.822348;
-                this.center.lat =22.635538;
-                this.zoom =this.zoom
+                this.center.lng = 113.822348;
+                this.center.lat = 22.635538;
+                // this.zoom = this.zoom
             },
-            goback(){
-              this.$router.go(-1)
+            goback() {
+                this.$router.go(-1)
             },
-            getClickInfo (e) {
+            getClickInfo(e) {
                 console.log(e.point.lng);
                 console.log(e.point.lat);
                 this.center.lng = e.point.lng;
                 this.center.lat = e.point.lat;
             },
-            showNav(){
+            showNav() {
                 this.showNavBox = !this.showNavBox
             },
-            selectControl(id){
-                console.log(id)
+            selectControl(id, title) {
+                let params = {vid: this.vid, cid: id}
+                addViewJoinControl(params).then(res => {
+                   if (res.code == 0){
+                       this.getControl = res.data;
+                       this.control.forEach((result, index)=> {
+                           this.getControl.forEach(cl => {
+                               if (result.cid == cl.cid){
+                                   result.show = true
+                                   result.vcid = cl.id
+                               }
+                           })
+                       })
+                   }else{
+                       this.$message(res.msg)
+                   }
+                });
+                this.setControl.push({title: title})
             },
-            postFormText(){
+            postFormText() {
                 console.log(this.formtext)
+            },
+            formDo(type, index){
+                if (type == 'add'){
+                    let url = {
+                        pid: '',
+                        gid: '',
+                        title: '',
+                        url: ''
+                    }
+                    this.formUrl.push(url)
+                } else if (type == 'del') {
+                    let len = this.formUrl.length;
+                    if (len == 1){
+                        return;
+                    }
+                    this.formUrl.splice(index,1)
+                }
+            },
+            onadd(){
+                console.log(this.formUrl)
+            },
+            delControl(id, index){
+                delViewJoinControl({id:id, vid: this.vid}).then(res => {
+                    if (res.code == 0){
+                        this.control[index].show = false
+                        this.$message(res.msg)
+                    }else{
+                        this.$message(res.msg)
+                    }
+                })
             }
         },
         mounted() {
             getViewControl().then(res => {
-                if (res.code == 0){
+                if (res.code == 0) {
                     this.controls = res.data
-                } else{
+                } else {
                     this.$message('暂无数据');
                 }
-            })
+            });
+
+            if (!this.vid){
+                this.$router.go(-1)
+            }
+            getViewJoinControlList({vid: this.vid}).then(res => {
+                if (res.code == 0){
+                    this.getControl = res.data;
+                    this.control.forEach((result, index)=> {
+                        this.getControl.forEach(cl => {
+                            if (result.cid == cl.cid){
+                                result.show = true;
+                                result.vcid = cl.id;
+                            }
+                        })
+                    })
+                } else{
+                    this.$message(res.msg)
+                }
+            });
         }
     }
 </script>
 
 <style lang="scss">
     @import "../assets/css/monitoring";
-   @import "../assets/css/mon";
+    @import "../assets/css/mon";
 </style>
