@@ -731,7 +731,7 @@
                 const $classTable = this.$refs.gatewayTable;
                 if (expandedRows.length > 1) {
                     this.streamTable = [];
-                        expandedRows.forEach(expandRow => {
+                    expandedRows.forEach(expandRow => {
                         if (row.id !== expandRow.id) {
                             $classTable.toggleRowExpansion(expandRow, false)
                         }else{

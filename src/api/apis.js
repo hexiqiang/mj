@@ -41,12 +41,23 @@ export const editTrigger = data => post('api/trigger/edittrigger',data); //编�
 export const getTrigger = data => get('api/trigger/gettrigger',data); //查询
 export const delTrigger = data => post('api/trigger/deltrigger',data); //删除
 
+//联控
+export const addJoins= data => post('api/joins/add',data); //添加
+export const editJoins = data => post('api/joins/edit',data); //编辑
+export const getJoins = data => get('api/joins/lists',data); //查询
+export const delJoins = data => post('api/joins/del',data); //删除
+
+//视图管理
+export const addView= data => post('api/viewmanage/add',data); //添加
+export const editView = data => post('api/viewmanage/edit',data); //编辑
+export const getView = data => get('api/viewmanage/lists',data); //查询
+export const delView = data => post('api/viewmanage/del',data); //删除
 
 //获取数据流云变量
 export const getCloudVal = data => get('api/api/datastreamofdev',data);
 //获取对应工程下的网关
 export const getProjectGateway = data => get('api/trigger/getgateway',data);
-//获取对应工程下的网关
+//获取对应网关下的数据流
 export const getGatewayStream = data => get('api/trigger/getstream',data);
 // 查询报警的记录
 export const getCallRecord= data => get('api/callrecord/getcallrecord',data);
@@ -58,6 +69,8 @@ export const getJoinRecord = data => get('api/joinrecord/getjoinrecord',data);
 export const getProjectJoin = data => get('api/joins/getprojectjoinslist',data);
 //查询网关的在线状态
 export const getGatewayStauts = data => get('api/gatewaystatus/gatewaystatus',data);
+//查询控件的组件
+export const  getViewControl = data => get('api/viewcontrol/lists',data);
 export default {
     getNavs
     ,getCsrf
@@ -98,4 +111,13 @@ export default {
     ,getJoinRecord
     ,getProjectJoin
     ,getGatewayStauts
+    ,addJoins
+    ,getJoins
+    ,editJoins
+    ,delJoins
+    ,addView
+    ,getView
+    ,editView
+    ,delView
+    ,getViewControl
 }

@@ -1,19 +1,19 @@
 <template>
     <div class="joint mondata">
         <el-col :span="24" class="mondata-top">
-            <el-form ref="form" v-model="form">
+            <el-form ref="form" v-model="searchForm">
                 <template>
-                    <el-select v-model="form.project_name" filterable placeholder="请选择工程">
+                    <el-select v-model="searchForm.pid" filterable placeholder="请选择工程" >
                         <el-option
                                 v-for="item in projects"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
+                                :key="item.project_name"
+                                :label="item.project_name"
+                                :value="item.id">
                         </el-option>
                     </el-select>
                 </template>
             </el-form>
-            <el-button type="primary" @click="showDl = true">添加</el-button>
+            <el-button type="primary" @click="showDl = true;title='添加视图名称'">添加</el-button>
             <el-button type="danger">删除</el-button>
             <el-button type="primary" @click="clickRefresh">刷新</el-button>
         </el-col>
@@ -28,10 +28,10 @@
                         :default-sort = "{order: 'descending'}"
                         tooltip-effect="dark">
                     <el-table-column type="selection" width="55"></el-table-column>
-                    <el-table-column prop="join_name" sortable label="工程名称" ></el-table-column>
+                    <el-table-column prop="project_name" sortable label="工程名称" ></el-table-column>
                     <el-table-column sortable prop="views"  label="视图名称" align="center">
                         <template slot-scope="scope">
-                            <div v-for="item in scope.row.views">{{item.name}}</div>
+                            <div v-for="item in scope.row.views">{{item.view_title}}</div>
                         </template>
                     </el-table-column>
                     <el-table-column prop="views" width="60" label="修改人">
@@ -55,11 +55,11 @@
                                 <el-button
                                         size="mini"
                                         type="primary"
-                                        @click="handleEdit(scope.$index, scope.row, item.view_id)">编辑</el-button>
+                                        @click="handleEdit(scope.$index, scope.row, item.id);title='编辑视图名称'">编辑</el-button>
                                 <el-button
                                         size="mini"
                                         type="danger"
-                                        @click="handleDelete(scope.$index, scope.row, item.view_id)">删除</el-button>
+                                        @click="handleDelete(scope.$index, scope.row, item.id)">删除</el-button>
                                 <el-button
                                         size="mini"
                                         type="danger"
@@ -73,96 +73,97 @@
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        :current-page="currentPage4"
-                        :page-sizes="[6, 6, 6, 2]"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 50, 100]"
                         :page-size="6"
                         layout="total, sizes, prev, pager, next, jumper"
-                        :total="20">
+                        :total="totalCount">
                 </el-pagination>
             </el-col>
-            <el-dialog class="form-dialog-box" title="添加视图名称" :visible.sync="showDl">
-                <el-form label-position="left" label-width="80px" :model="form">
-                    <el-col :span="24">
-                        <el-col :span="12">
-                            <el-form-item label="工程名称">
-                                <template>
-                                    <el-select v-model="form.project_title" filterable placeholder="请选择工程">
-                                        <el-option
-                                                v-for="item in projects"
-                                                :key="item.value"
-                                                :label="item.label"
-                                                :value="item.value">
-                                        </el-option>
-                                    </el-select>
-                                </template>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="12">
-                            <el-form-item label="视图名称">
-                                <el-input v-model="form.view_title"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="24">
-                            <el-form-item label="备注">
-                                <el-input v-model="form.note"></el-input>
-                            </el-form-item>
-                        </el-col>
-                    </el-col>
-                </el-form>
-                <div slot="footer" class="dialog-footer">
-                    <el-button @click="showDl = false">取 消</el-button>
-                    <el-button type="primary" @click="onAdd">保存</el-button>
-                </div>
-            </el-dialog>
         </el-col>
+        <el-dialog class="form-dialog-box" :title="title" :visible.sync="showDl">
+            <el-form label-position="left" label-width="80px" :model="form">
+                <el-col :span="24">
+                    <el-col :span="12">
+                        <el-form-item label="工程名称"  :required="true" >
+                            <template>
+                                <el-select v-model="form.pid" filterable placeholder="请选择工程" >
+                                    <el-option
+                                            v-for="item in projects"
+                                            :key="item.project_name"
+                                            :label="item.project_name"
+                                            :value="item.id">
+                                    </el-option>
+                                </el-select>
+                            </template>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="12">
+                        <el-form-item label="视图名称"  :required="true" >
+                            <el-input v-model="form.view_title"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col :span="24">
+                        <el-form-item label="备注">
+                            <el-input v-model="form.note"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-col>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="showDl = false">取 消</el-button>
+                <el-button type="primary" @click="onAdd">保存</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
+    import {
+        getProjectList
+        ,addView
+        ,getView
+        ,editView
+        ,delView
+    } from "../api/apis";
+
     export default {
         name: "MonitroingData",
         data(){
             return{
                 showDl: false,
+                searchForm:{
+                  pid: ''
+                },
                 form:{
-                    project_name: '',
+                    pid: '',
                     view_title: '',
                     note: ''
                 },
-                projects: [{
-                    value: '全部',
-                    label: '全部'
-                },{
-                    value: '祥顺综合园',
-                    label: '祥顺综合园'
-                }, {
-                    value: '怀化水利',
-                    label: '怀化水利'
-                }],
-                currentPage4: 1,
-                tableData: [{
-                    join_name: '从化温泉', // 工程名称
-                    views:[
-                        {name: '实时数据', editer: '张三', 'edit_date': '2022-02-01 11:12:12', 'note': '备注内容', view_id: 1},
-                        {name: '地图', editer: '李四', 'edit_date': '2022-02-01 15:12:12', 'note': '备注内容', view_id: 2},
-                        {name: '监控', editer: '高挑', 'edit_date': '2022-02-01 16:12:12', 'note': '备注内容', view_id: 3},
-                        {name: '水位检测', editer: '飞扬', 'edit_date': '2022-02-01 18:12:12', 'note': '备注内容', view_id: 4},
-                    ]
-                },{
-                    join_name: '怀集温泉', // 工程名称
-                    views:[
-                        {name: '实时数据', editer: '张三', 'edit_date': '2022-02-01 11:12:12', 'note': '备注内容', view_id: 1},
-                        {name: '监控', editer: '李四', 'edit_date': '2022-02-01 15:12:12', 'note': '备注内容', view_id: 2},
-                        {name: '地图', editer: '高挑', 'edit_date': '2022-02-01 16:12:12', 'note': '备注内容', view_id: 3},
-                        {name: '水位检测', editer: '飞扬', 'edit_date': '2022-02-01 18:12:12', 'note': '备注内容', view_id: 4},
-                    ]
-                }],
-                multipleSelection: []
+                projects: [],
+                tableData: [],
+                multipleSelection: [],
+                title: '',
+                currentPage: 1,
+                totalCount: 10,
+                offset: 0,
+                limit: 10
             }
         },
         methods:{
             goNav(index, row, vid){
-              this.$router.push('/monitoring')
+              this.$router.push({ name: 'monitoring', query: { userId: 123 }})
+            },
+            getRecord(offset, limit){
+                getView({offset: offset, limit: limit}).then(res => {
+                    if (res.code == 0){
+                        this.totalCount = Number(res.data.totalCount);
+                        this.tableData = res.data['data']
+                    } else{
+                        this.$message('暂无数据')
+                    }
+
+                })
             },
             clickRefresh(){
                 this.$router.go(0)
@@ -170,8 +171,8 @@
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            handleEdit(index, row) {
-                console.log(index, row);
+            handleEdit(index, row,id) {
+                console.log(index, row,id);
             },
             handleDelete(index, row, vid) {
                 console.log(index, row, vid);
@@ -209,8 +210,29 @@
                 console.log(`当前页: ${val}`);
             },
             onAdd(){
-
+                let pid = this.form.pid;
+                let view_title = this.form.view_title;
+                if (pid && view_title){
+                    addView(this.form).then(res => {
+                        if (res.code == 0){
+                            this.showDl = false;
+                            this.$message({message: res.msg, type: 'success'})
+                        } else{
+                            this.$message({message: res.msg, type: 'warning'})
+                        }
+                    })
+                } else{
+                    this.$message('请填写完整星号项')
+                }
             }
+        },
+        mounted() {
+            getProjectList().then(res =>{
+                if (res.code == 0){
+                    this.projects = res.data
+                }
+            })
+            this.getRecord(this.offset, this.limit)
         }
     }
 </script>

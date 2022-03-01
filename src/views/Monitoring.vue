@@ -3,14 +3,10 @@
     <div id="mon" class="mon">
         <div>
             <div class="right-nav-box" v-if="showNavBox">
-                <div><i class="iconfont icon-zhichiduozhongshujuleixing"></i></div>
-                <div><i class="iconfont icon-shujubiaozhunhua"></i></div>
-                <div><i class="iconfont icon-a-quxiantushuju"></i></div>
-                <div><i class="iconfont icon-wenjian"></i></div>
-                <div><i class="iconfont icon-jiankong"></i></div>
-                <div><i class="iconfont icon-duliang"></i></div>
-                <div><i class="iconfont icon-ditu"></i></div>
-                <div><i class="iconfont icon-beizhu"></i></div>
+                <template v-for="(item, index) in controls">
+                    <div @click="selectControl(item.id)" :title="item.control_name"><i :class="item.icon"></i></div>
+                </template>
+
                 <div class="save-data"><span>保存</span></div>
                 <div @click="goback"><i class="iconfont icon-fanhui fanhui"></i></div>
                 <span class="cl-show-box" @click="showNav(showNavBox)"><i class="el-icon-arrow-right"></i></span>
@@ -21,7 +17,7 @@
         <el-col :span="24" class="mov-view">
             <el-col :span="24" class="mov-right">
                 <el-col :span="24" class="box-border">
-                    <p><i class="iconfont icon-sanjiao3"></i>工程名称</p>
+                    <p><i class="iconfont icon-sanjiao3"></i>数据展示组件</p>
                     <el-col :span="24">
                         <div class="project-box">
                             <el-col :span="4">
@@ -93,8 +89,42 @@
                         </div>
                     </el-col>
                 </el-col>
+                <el-col :span="24" class="box-border">
+                    <p><i class="iconfont icon-sanjiao3"></i>数据监控组件</p>
+                    <el-col :span="24">
+                        <div class="project-box data-mon">
+                            <el-col :span="5">
+                                <i class="iconfont icon-yewei"></i>
+                            </el-col>
+                            <el-col :span="19">
+                                <el-col :span="12" class="left-24">
+                                    <el-col :span="24">1#水池液位</el-col>
+                                    <el-col :span="24">当前值：0.04米</el-col>
+                                    <el-col :span="24">
+                                        <el-form v-model="formStatus">
+                                            <el-switch class="switchStyle"
+                                                       v-model="formStatus.status"
+                                                       active-color="#1899EE"
+                                                       active-text="开启"
+                                                       @change="statusChange(scope.$index, scope.row)"
+                                                       inactive-color="#DBE0E6"
+                                                       inactive-text="关闭">
+                                            </el-switch>
+                                        </el-form>
+                                    </el-col>
+                                </el-col>
+                                <el-col :span="12">
+                                    <el-col :span="24">2022-02-11 15：25</el-col>
+                                    <el-col :span="24">
+                                        <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
+                                    </el-col>
+                                </el-col>
+                            </el-col>
+                        </div>
+                    </el-col>
+                </el-col>
                 <el-col :span="24"  class="box-border">
-                    <p><i class="iconfont icon-sanjiao3"></i>表单组件</p>
+                    <p><i class="iconfont icon-sanjiao3"></i>报表控件组件</p>
                     <el-col :span="24" class="stream_count">
                         <el-col :span="24">
                             <el-tabs v-model="activeName" @tab-click="handleClick">
@@ -272,7 +302,7 @@
                     </el-col>
                 </el-col>
                 <el-col :span="24" class="video-view box-border">
-                    <p><i class="iconfont icon-sanjiao3"></i>地图插件</p>
+                    <p><i class="iconfont icon-sanjiao3"></i>地图设备定位显示组件</p>
                     <el-col :span="24">
                         <div class="mapbox">
 
@@ -286,6 +316,20 @@
 
                                 <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"> </bm-city-list>
                         </div>
+                    </el-col>
+                </el-col>
+                <el-col :span="24" class="box-border">
+                    <p><i class="iconfont icon-sanjiao3"></i>文本组件</p>
+                    <el-col :span="24">
+                        <el-form  ref="form" :model="formtext" label-width="80px">
+                            <el-input type="textarea" v-model="formtext.note" placeholder="请输入备注信息" @blur="postFormText" height="200px"></el-input>
+                        </el-form>
+                    </el-col>
+                </el-col>
+                <el-col :span="24" class="box-border">
+                    <p><i class="iconfont icon-sanjiao3"></i>监控视频组件</p>
+                    <el-col :span="24" class="video-box">
+                        <img src="../assets/images/video.png" alt="">
                     </el-col>
                 </el-col>
             </el-col>
@@ -304,6 +348,8 @@
 </template>
 
 <script>
+    import {getViewControl} from "../api/apis";
+
     export default {
         name: "Monitoring",
         data(){
@@ -311,6 +357,7 @@
                 showView: false,
                 activeName: 'first',
                 showNavBox: true,
+                controls: [],
                 options: [
                     {
                         value: '怀集水利工程',
@@ -377,6 +424,12 @@
                         {'日期': '2022-02-17', '条数': 107}
                     ]
                 },
+                formtext: {
+                    note: ''
+                },
+                formStatus: {
+                    status: ''
+                },
                 center: {lng:0, lat:0},
                 zoom:13,
             }
@@ -405,115 +458,27 @@
             },
             showNav(){
                 this.showNavBox = !this.showNavBox
+            },
+            selectControl(id){
+                console.log(id)
+            },
+            postFormText(){
+                console.log(this.formtext)
             }
+        },
+        mounted() {
+            getViewControl().then(res => {
+                if (res.code == 0){
+                    this.controls = res.data
+                } else{
+                    this.$message('暂无数据');
+                }
+            })
         }
     }
 </script>
 
 <style lang="scss">
     @import "../assets/css/monitoring";
-    .mon{
-        position: relative;
-        .box-border{
-            border:1px solid #eee;
-        }
-        .bm-view {
-            width:100%;
-            height:300px;
-        }
-        .cl-show-box-1{
-            position: absolute;
-            left: -14px;
-            top: 40vh;
-            background: #242F42;
-            width: 30px;
-            height: 30px;
-            line-height: 30px;
-            text-align: right;
-            border-top-right-radius: 50%;
-            border-bottom-right-radius: 50%;
-            i{
-                color: #fff;
-            }
-        }
-        .right-nav-box{
-            position: absolute;
-            width: 40px;
-            background: #242F42;
-            left: 0;
-            top: 20vh;
-            z-index: 10000;
-            div{
-                text-align: center;
-                padding: 2px;
-                i{
-                    width: 36px;
-                    font-size: 20px;
-                    height: 36px;
-                    line-height: 36px;
-                    color: white;
-                }
-                span{
-                    display: block;
-                    background: #324157;
-                    color: #fff;
-                    border: 1px solid #fff;
-                    height: 36px;
-                    line-height: 36px;
-                    border-radius: 4px;
-                    font-size: 12px;
-                }
-                .fanhui{
-                    display: block;
-                    background: #324157;
-                    color: #fff;
-                    border: 1px solid #fff;
-                    height: 36px;
-                    box-sizing: border-box;
-                    border-radius: 4px;
-                }
-            }
-            div:last-child{
-                i{
-                    display: block;
-                    background: #324157;
-                    color: #fff;
-                    border: 1px solid #fff;
-                    height: 36px;
-                    box-sizing: border-box;
-                    border-radius: 4px;
-                }
-            }
-            .cl-show-box{
-                position: absolute;
-                left: 24px;
-                top: 20vh;
-                background: #242F42;
-                width: 30px;
-                height: 30px;
-                line-height: 30px;
-                text-align: right;
-                border-top-right-radius: 50%;
-                border-bottom-right-radius: 50%;
-                z-index: -1;
-                i{
-                    color: #fff;
-                }
-            }
-        }
-        .goback{
-            margin-bottom: 10px;
-        }
-        .mov-view{
-            padding: 10px 40px;
-        }
-        .hidden-scroll{
-            position: absolute;
-            right: 40px;
-            top: 10px;
-            bottom: 10px;
-            width: 30px;
-            background: white;
-        }
-    }
+   @import "../assets/css/mon";
 </style>
