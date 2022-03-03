@@ -12,6 +12,7 @@
     "echarts": "^4.9.0",
     "element-ui": "^2.15.6",
     "http-proxy-middleware": "^2.0.3",
+    "js-md5": "^0.7.3",
     "qs": "^6.10.3",
     "v-charts": "^1.19.0",
     "vue": "^2.6.11",

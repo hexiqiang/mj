@@ -7,7 +7,7 @@
                         <el-input v-model="form.keyword" placeholder="请输入搜索内容"></el-input>
                     </el-col>
                     <el-col :span="6">
-                        <el-button icon="el-icon-search"></el-button>
+                        <el-button icon="el-icon-search" @click="searchUser"></el-button>
                     </el-col>
                 </el-form>
             </el-col>
@@ -22,6 +22,7 @@
                         :data="tableData"
                         border
                         @selection-change="handleSelectionChange"
+                        @expand-change="showPro"
                         :default-sort = "{order: 'descending'}"
                         tooltip-effect="dark">
                     <el-table-column type="selection" width="55"></el-table-column>
@@ -43,17 +44,17 @@
                                     size="mini"
                                     type="danger"
                                     class="add-call"
-                                    @click="userRule = true;setNavForm.mid=scope.row.id;navs();selectUserNavList(scope.row.id)">栏目管理</el-button>
+                                    @click="userRule = true;setNavForm.mid=scope.row.id;navs();selectUserNavList(scope.row.id);nid=scope.row.id">栏目管理</el-button>
                             <el-button
                                     size="mini"
                                     type="danger"
                                     class="add-call"
-                                    @click="userProject = true;setRuleForm.mid=scope.row.id;proRule();selectRuleNavList(scope.row.id)">控制权限设置</el-button>
+                                    @click="ruleProject = true;setRuleForm.mid=scope.row.id;proRule();selectRuleList(scope.row.id);rid=scope.row.id">控制权限设置</el-button>
                             <el-button
                                     size="mini"
                                     type="danger"
                                     class="add-call"
-                                    @click="userProject = true;setProForm.mid=scope.row.id;pros();selectUserProList(scope.row.id)">工程管理</el-button>
+                                    @click="userProject = true;setProForm.mid=scope.row.id;pros();selectUserProList(scope.row.id);pid=scope.row.id">工程管理</el-button>
                             <el-button
                                     size="mini"
                                     type="danger"
@@ -71,16 +72,16 @@
                     </el-table-column>
                     <el-table-column type="expand">
                         <template slot-scope="props">
-                            <el-table :data="userPro" border class="next-table">
+                            <el-table ref="userPro" :data="userPro" border class="next-table">
                                 <el-table-column type="selection" width="55"></el-table-column>
-                                <el-table-column prop="project" sortable label="工程名称"></el-table-column>
+                                <el-table-column prop="project_name" sortable label="工程名称"></el-table-column>
                                 <el-table-column prop="note" sortable label="备注"></el-table-column>
                                 <el-table-column label="操作">
                                     <template slot-scope="scope">
                                         <el-button
                                                 size="mini"
                                                 type="danger"
-                                                @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                                                @click="userProDelete(scope.$index, scope.row)">删除</el-button>
                                     </template>
                                 </el-table-column>
                             </el-table>
@@ -92,16 +93,16 @@
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        :current-page="currentPage4"
-                        :page-sizes="[6, 6, 6, 2]"
-                        :page-size="6"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 50, 100]"
+                        :page-size="10"
                         layout="total, sizes, prev, pager, next, jumper"
-                        :total="20">
+                        :total="totalCount">
                 </el-pagination>
             </el-col>
 
         </el-col>
-        <el-dialog class="baojing" :title="title" :visible.sync="dialogFormVisible">
+        <el-dialog v-if="setRuleForm.mid==rid" class="baojing" :title="title" :visible.sync="dialogFormVisible">
             <el-form :model="formData" ref="formData" :rules="rules">
                 <el-col :span="24">
                     <el-col :span="8">
@@ -154,7 +155,7 @@
                 <el-button type="primary" @click="onAdd('formData')">保存</el-button>
             </div>
         </el-dialog>
-        <el-dialog class="baojing" width="33%" title="权限管理" :visible.sync="userProject">
+        <el-dialog class="baojing" width="33%" title="权限管理" :visible.sync="ruleProject">
             <template>
                 <el-transfer
                         :titles="['可选工程', '已选工程']"
@@ -162,15 +163,15 @@
                         filter-placeholder="请输入"
                         v-model="val"
                         @change="ruleChange"
-                        :data="proLists">
+                        :data="ruleLists">
                 </el-transfer>
             </template>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="userProject = false">取 消</el-button>
-                <el-button type="primary" @click="addPro">保存</el-button>
+                <el-button @click="ruleProject = false">取 消</el-button>
+                <el-button type="primary" @click="saveRule">保存</el-button>
             </div>
         </el-dialog>
-        <el-dialog class="baojing" width="33%" title="工程管理" :visible.sync="userProject">
+        <el-dialog v-if="setProForm.mid==pid" class="baojing" width="33%" title="工程管理" :visible.sync="userProject">
             <template>
                 <el-transfer
                         :titles="['可选工程', '已选工程']"
@@ -186,7 +187,7 @@
                 <el-button type="primary" @click="addPro">保存</el-button>
             </div>
         </el-dialog>
-        <el-dialog class="baojing" width="33%" title="栏目管理" :visible.sync="userRule">
+        <el-dialog v-if="setNavForm.mid==nid" class="baojing" width="33%" title="栏目管理" :visible.sync="userRule">
             <template>
                 <el-transfer
                         :titles="['可选栏目', '已选栏目']"
@@ -219,6 +220,9 @@
         getProjectList,
         addUserPro
         ,UserProList
+        ,Searchprojectlist
+        ,addUserProRule
+        ,UserProRuleList
     } from "../api/apis";
 
     export default {
@@ -232,6 +236,7 @@
                 dialogFormVisible: false,
                 userRule: false,
                 userProject: false,
+                ruleProject: false,
                 formData: {
                     member: '',
                     phone: '',
@@ -256,14 +261,10 @@
                         { min: 6, max: 12, message: '请输入电话号码', trigger: 'blur' }
                     ],
                 },
-                currentPage4: 1,
+                currentPage: 1,
+                totalCount: 0,
                 tableData: [],
-                userPro:[
-                    {
-                        project: '温氏集团',
-                        note: '这是温氏集团的备注',
-                    }
-                ],
+                userPro:[],
                 multipleSelection: [],
                 //栏目
                 selectNav: [],
@@ -274,12 +275,50 @@
                 setProForm: [],
                 value: [],
                 //工程开关
-                setRuleForm: [],
                 ruleLists: [],
+                setRuleForm: [],
                 val:[],
+                offset: 0,
+                limit: 10,
+                nid: 0,
+                pid: 0,
+                rid: 0,
             }
         },
         methods:{
+            showPro(row,expandedRows){
+                // console.log(row.id);console.log(expandedRows);
+                const $classTable = this.$refs.multipleTable;
+                console.log(expandedRows)
+                if (expandedRows.length == 0)return;
+                if (expandedRows.length > 1) {
+                    expandedRows.forEach(expandRow => {
+                        if (row.id !== expandRow.id) {
+                            $classTable.toggleRowExpansion(expandRow, false);
+                        }else{
+                            Searchprojectlist({mid: row.id}).then(res => {
+                                if (res.code == 0){
+                                    this.userPro = res.data;
+                                } else{
+                                    this.userPro = [];
+                                    this.$message(res.msg);
+                                }
+                            });
+                        }
+                    })
+                }else{
+                    let id = expandedRows[0].id ? expandedRows[0].id : row.id;
+                    console.log(id)
+                    Searchprojectlist({mid: id}).then(res => {
+                        if (res.code == 0){
+                            this.userPro = res.data;
+                        } else{
+                            this.userPro = [];
+                        }
+                    });
+                }
+
+            },
             dialogForm(){
                 this.dialogFormVisible = true;
                 this.title = '添加用户';
@@ -329,11 +368,45 @@
                     });
                 });
             },
+            userProDelete(index, row){
+                console.log(row)
+                this.setProForm.id = row.upid;
+                let pid = row.id;
+                let pidList = row.pid;
+                let mid = row.mid;
+                pidList.forEach((i, j) => {
+                    if (i == pid){
+                        pidList.splice(j, 1)
+                    }
+                });
+                this.setProForm.pid = pidList;
+                this.setProForm.mid = mid;
+                addUserPro(this.setProForm).then(res => {
+                    if (res.code == 0){
+                        this.$message({type:'success', message:res.msg});
+                        this.clickRefresh()
+                    } else{
+                        this.$message({type:'waring',message:res.msg})
+                    }
+                })
+            },
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
+                let offset = 0;
+                let limit = val;
+                this.offset = offset;
+                this.limit = limit;
+                this.getRecord(this.offset, this.limit, this.form)
             },
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
+                if (val == 1){
+                    let offset = 0;
+                    this.getRecord(offset, this.limit, this.form)
+                } else{
+                    this.offset = this.limit * (val - 1);
+                    this.getRecord(this.offset, this.limit, this.form)
+                }
             },
             // 修改用户状态
             statusChange(index, row){
@@ -424,21 +497,31 @@
 
             },
             proRule(){
-
+                getProjectList().then(res => {
+                    this.ruleLists = [];
+                    if (res.code == 0){
+                        var datas = this.projectData(res.data);
+                        this.ruleLists = datas;
+                        this.$forceUpdate
+                    }
+                })
             },
             pros(){
                 getProjectList().then(res => {
+                    this.proLists = [];
                     if (res.code == 0){
                         var datas = this.projectData(res.data);
-                        this.proLists = datas
+                        this.proLists = datas;
+                        this.$forceUpdate
                     }
                 })
-
             },
             navs(){
                 getNavsLists().then(res => {
+                    this.navsList=[]
                     var datas = this.selectData(res.data);
-                    this.navsList = datas
+                    this.navsList = datas;
+                    this.$forceUpdate
                 });
             },
             projectData(arr){
@@ -463,6 +546,17 @@
                 });
                 return datas;
             },
+            selectRuleData(arr){
+                let datas = [];
+                arr.forEach((a, i) => {
+                    datas.push({
+                        id: a.id,
+                        key: a.id,
+                        label: a.name
+                    });
+                });
+                return datas;
+            },
             handleChange(value, direction, movedKeys) {
                 this.setNavForm.nid = this.selectNav;
             },
@@ -473,18 +567,20 @@
                 this.setRuleForm.pid = this.val
             },
             selectUserNavList(id){
+                let _this = this;
                 UserNavList({mid:id}).then(res => {
                     if (res.code == 0){
+                        _this.selectNav= [];
                         let datas = this.selectData(res.data)
                         datas.forEach((i,j) => {
-                            this.navsList.forEach((n,m) => {
+                            _this.navsList.forEach((n,m) => {
                                 if (i.id == n.id){
-                                    this.selectNav.push(n.key)
+                                    _this.selectNav.push(n.key)
                                 }
                             })
                         })
                     }else{
-                        this.selectNav = [];
+                        _this.selectNav = [];
                     }
                 })
             },
@@ -492,6 +588,7 @@
                 let _this = this;
                 UserProList({mid:id}).then(res => {
                     if (res.code == 0){
+                        _this.value = [];
                         let datas = _this.projectData(res.data);
                         datas.forEach((i,j) => {
                             this.proLists.forEach((n,m) => {
@@ -501,23 +598,36 @@
                             })
                         })
                     }else{
-                        this.value = [];
+                        _this.value = [];
                     }
                 })
             },
-            selectRuleNavList(id){
-                UserNavList({mid:id}).then(res => {
+            selectRuleList(id){
+                let _this = this;
+                UserProRuleList({mid:id}).then(res => {
                     if (res.code == 0){
-                        let datas = this.selectData(res.data)
+                        _this.val = [];
+                        let datas = this.selectRuleData(res.data);
+                        console.log(datas);
                         datas.forEach((i,j) => {
-                            this.navsList.forEach((n,m) => {
+                            _this.ruleLists.forEach((n,m) => {
                                 if (i.id == n.id){
-                                    this.selectNav.push(n.key)
+                                    _this.val.push(n.key)
                                 }
                             })
-                        })
+                        });
                     }else{
-                        this.selectNav = [];
+                        _this.val = [];
+                    }
+                })
+            },
+            saveRule(){
+                addUserProRule(this.setRuleForm).then(res => {
+                    if (res.code == 0){
+                        this.$message({type:'success', message:res.msg})
+                        this.clickRefresh()
+                    } else{
+                        this.$message({type:'waring',message:res.msg})
                     }
                 })
             },
@@ -541,15 +651,31 @@
                     }
                 })
             },
+            getRecord(offset, limit, field){
+                let where = {
+                    offset: offset,
+                    limit: limit,
+                };
+                if (field){
+                    Object.assign(where,field)
+                }
+                console.log(field)
+                getMembers(where).then(res => {
+                    if (res.code == 0){
+                        console.log(res.data);
+                        this.totalCount = Number(res.data.totalCount);
+                        this.tableData = res.data.data;
+                    }else{
+                        this.$message('请稍后，服务器忙！')
+                    }
+                })
+            },
+            searchUser(){
+                this.getRecord(this.offset,this.limit, this.form)
+            }
         },
         mounted() {
-            getMembers().then(res => {
-                if (res.code == 0){
-                    this.tableData = res.data.data;
-                } else{
-                    this.$message(res.msg)
-                }
-            });
+            this.getRecord(this.offset, this.limit)
         }
     }
 </script>

@@ -7,7 +7,7 @@
             <div class="ol-form">
                 <div class="ol-form-title">欧龙物联网监控平台</div>
                 <el-form ref="form" v-model="form" label-width="80px">
-                    <el-input prefix-icon="iconfont icon-jurassic_user" v-model="form.name" placeholder="输入登录账号"></el-input>
+                    <el-input prefix-icon="iconfont icon-jurassic_user" v-model="form.username" placeholder="输入登录账号"></el-input>
                     <el-input prefix-icon="iconfont icon-mima" v-model="form.password"  show-password  placeholder="输入登录密码"></el-input>
                     <el-checkbox label="记住登录信息" v-model="form.checked"></el-checkbox>
                     <el-form-item>
@@ -21,12 +21,14 @@
 </template>
 
 <script>
+    import md5 from 'js-md5';
+    import {login} from "../api/apis";
     export default {
         name: "Login",
         data(){
             return{
                 form: {
-                    name: '',
+                    username: '',
                     password: '',
                     checked: true
                 }
@@ -34,12 +36,27 @@
         },
         mounted(){
             // var bg = window.document.getElementsByClassName('bg')[0].style.backgroundImage = "url()";
-            console.log(bg)
+            // console.log(bg)
         },
         methods:{
             onSubmit() {
-                console.log(this.form)
-                this.$router.push('/home')
+                console.log(this.form);
+                let field = {
+                    username: this.form.username,
+                    password: md5(this.form.password),
+                }
+                login(field).then(res => {
+                    if (res.code == 0){
+                        console.log(res.data);
+                        this.$store.commit('increment', res.data.mtoken);
+                        this.$message({type: 'waring',message: res.msg});
+                        setTimeout(() => {
+                            this.$router.push('/home')
+                        },1000);
+                    } else{
+                        this.$message({type: 'waring',message: res.msg})
+                    }
+                })
             }
         }
 

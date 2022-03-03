@@ -8,10 +8,10 @@
                         <div class="my-title">工程概览</div>
                     </el-col>
                     <el-col :span="16">
-                        <div class="mj-top"><strong>17</strong>
+                        <div class="mj-top"><strong>{{indexTop.porject.online}}</strong>
                             <small>在线</small>
                         </div>
-                        <div class="mj-top"><strong>17</strong>
+                        <div class="mj-top"><strong>{{indexTop.porject.count}}</strong>
                             <small>总工程</small>
                         </div>
                     </el-col>
@@ -24,10 +24,10 @@
                         <div class="my-title">网关概览</div>
                     </el-col>
                     <el-col :span="16">
-                        <div class="mj-top"><strong>86</strong>
+                        <div class="mj-top"><strong>{{indexTop.gateway.online}}</strong>
                             <small>在线</small>
                         </div>
-                        <div class="mj-top"><strong>147</strong>
+                        <div class="mj-top"><strong>{{indexTop.gateway.count}}</strong>
                             <small>总网关</small>
                         </div>
                     </el-col>
@@ -40,10 +40,10 @@
                         <div class="my-title">报警记录</div>
                     </el-col>
                     <el-col :span="16">
-                        <div class="mj-top"><strong>17</strong>
+                        <div class="mj-top"><strong>{{indexTop.callrecord.day3}}</strong>
                             <small>最近3天（条）</small>
                         </div>
-                        <div class="mj-top"><strong>17</strong>
+                        <div class="mj-top"><strong>{{indexTop.callrecord.day30}}</strong>
                             <small>最近30天（条）</small>
                         </div>
                     </el-col>
@@ -56,10 +56,10 @@
                         <div class="my-title">控制记录</div>
                     </el-col>
                     <el-col :span="16">
-                        <div class="mj-top"><strong>218</strong>
+                        <div class="mj-top"><strong>{{indexTop.controlrecord.day3}}</strong>
                             <small>最近3天（条）</small>
                         </div>
-                        <div class="mj-top"><strong>1239</strong>
+                        <div class="mj-top"><strong>{{indexTop.controlrecord.day30}}</strong>
                             <small>最近30天（条）</small>
                         </div>
                     </el-col>
@@ -72,10 +72,10 @@
                         <div class="my-title">联控记录</div>
                     </el-col>
                     <el-col :span="16">
-                        <div class="mj-top"><strong>71</strong>
+                        <div class="mj-top"><strong>{{indexTop.joinrecord.day3}}</strong>
                             <small>最近3天（条）</small>
                         </div>
-                        <div class="mj-top"><strong>171</strong>
+                        <div class="mj-top"><strong>{{indexTop.joinrecord.day30}}</strong>
                             <small>最近30天（条）</small>
                         </div>
                     </el-col>
@@ -87,7 +87,10 @@
 
 <script>
     export default {
-        name: "HomeHeader"
+        name: "HomeHeader",
+        props:['indexTop'],
+        mounted() {
+        }
     }
 </script>
 

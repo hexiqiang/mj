@@ -1,4 +1,4 @@
-<template>
+<template >
     <div class="home-midden">
         <el-row>
             <el-col :span="16">
@@ -6,11 +6,11 @@
                     <el-col :sapn="24">
                         <el-form ref="form" :model="form" label-width="80px">
                             <el-col :span="6">
-                                <el-input v-model="form.input" placeholder="请输入内容"></el-input>
+                                <el-input v-model="form.keyword" placeholder="请输入内容"></el-input>
                             </el-col>
                             <el-col :span="16">
                                 <el-button type="primary" icon="el-icon-search" @click="onSearch">搜索</el-button>
-                                <el-select v-model="form.value" placeholder="请选择">
+                                <el-select v-model="form.online" placeholder="请选择">
                                     <el-option
                                             v-for="item in options"
                                             :key="item.value"
@@ -23,26 +23,28 @@
                     </el-col>
                     <el-col :span="24">
                         <div class="list-box">
-                            <el-col :span="6" v-for="o in 8" :key="o">
+                            <el-col :span="6" v-for="(item, index) in datas" :key="item.id">
                                 <div class="show-status-box">
                                     <el-col :span="8"><i class="iconfont icon-dingwei"></i></el-col>
                                     <el-col :span="16">
-                                        <div>文田猪场</div>
-                                        <div :class="{red: online}">在线</div>
+                                        <div>{{item.project_name}}</div>
+                                        <div :class="{red: item.gateway_status == 1, green: item.gateway_status == 0}">{{item.gateway_status == 1 ? '在线' : '离线'}}</div>
                                     </el-col>
                                 </div>
                             </el-col>
                         </div>
                     </el-col>
-                    <el-pagination
-                            @size-change="handleSizeChange"
-                            @current-change="handleCurrentChange"
-                            :current-page="currentPage4"
-                            :page-sizes="[6, 6, 6, 2]"
-                            :page-size="6"
-                            layout="total, sizes, prev, pager, next, jumper"
-                            :total="20">
-                    </el-pagination>
+                    <el-col :span="24" class="page-box">
+                        <el-pagination
+                                @size-change="handleSizeChange"
+                                @current-change="handleCurrentChange"
+                                :current-page="currentPage"
+                                :page-sizes="[8]"
+                                :page-size="8"
+                                layout="total, sizes, prev, pager, next, jumper"
+                                :total="totalCount">
+                        </el-pagination>
+                    </el-col>
                 </div>
             </el-col>
             <el-col :span="6">
@@ -52,12 +54,12 @@
                             <span>系统消息</span>
                             <el-button style="float: right; padding: 3px 0" type="text">更多</el-button>
                         </div>
-                        <div v-for="o in 4" :key="o" class="text item">
+                        <div v-for="(item, index) in indexData.message" :key="item.id" class="text item">
                             <el-col :span="19">
-                                <el-col :span="3">{{o+ '.'}}</el-col>
-                                <el-col :span="18">{{ ' 列表内容列表内容列表内容列表内容列表内容 ' + o }}</el-col>
+                                <el-col :span="3">{{(index+1) + '.'}}</el-col>
+                                <el-col :span="18">{{ item.title }}</el-col>
                             </el-col>
-                            <el-col :span="4">02-25</el-col>
+                            <el-col :span="4">{{ item.add_date.substr(5,5) }}</el-col>
                         </div>
                     </el-card>
                 </div>
@@ -68,44 +70,79 @@
 </template>
 
 <script>
+    import {getIndexProject} from "../api/apis";
+
     export default {
         name: "HomeMidden",
         data() {
             return {
                 form:{
-                    input: '',
-                    value: ''
+                    keyword: '',
+                    online: ''
                 },
-                currentPage4: 1,
                 options: [{
-                    value: '1',
-                    label: '全部',
-                    selected: true
-                },{
                     value: '2',
+                    label: '全部',
+                },{
+                    value: '1',
                     label: '在线',
-                    selected: true
                 }, {
-                    value: '3',
+                    value: '0',
                     label: '离线',
-                    selected: true
                 }],
                 online: true,
-                datas:[
+                datas:[],
+                currentPage: 1,
+                totalCount: 0,
+                offset: 0,
+                limit: 10
 
-                ]
             }
         },
+        props:['indexData'],
         methods:{
+            getRecord(offset, limit,form){
+                let field = {
+                    offset: offset,
+                    limit: limit,
+                };
+                if (form){
+                    Object.assign(field,form);
+                }
+                getIndexProject(field).then(res => {
+                    if (res.code == 0){
+                        this.datas = res.data.data;
+                        this.totalCount = Number(res.data.totalCount);
+                    }
+                })
+            },
             onSearch(){
+                this.getRecord(this.offset,this.limit,this.form)
                 console.log(this.form)
             },
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
+                let offset = 0;
+                let limit = val;
+                this.offset = offset;
+                this.limit = limit;
+                this.getRecord(this.offset, this.limit, this.form)
             },
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
+                if (val == 1){
+                    let offset = 0;
+                    this.getRecord(offset, this.limit, this.form)
+                } else{
+                    this.offset = this.limit * (val - 1);
+                    this.getRecord(this.offset, this.limit, this.form)
+                }
             }
+        },
+        created(){
+        },
+        mounted() {
+            this.getRecord(this.offset,this.limit,this.form)
         }
     }
 </script>
@@ -121,8 +158,15 @@
         }
         .show-status {
             overflow: hidden;
+            position: relative;
             .el-col-24{
                 margin-bottom: 0;
+            }
+            .page-box{
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: 0;
             }
         }
         form{

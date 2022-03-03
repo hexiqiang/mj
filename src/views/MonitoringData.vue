@@ -3,7 +3,7 @@
         <el-col :span="24" class="mondata-top">
             <el-form ref="form" v-model="searchForm">
                 <template>
-                    <el-select v-model="searchForm.pid" filterable placeholder="请选择工程" >
+                    <el-select v-model="searchForm.pid" filterable @change="searchProject"  placeholder="请选择工程" >
                         <el-option
                                 v-for="item in projects"
                                 :key="item.project_name"
@@ -155,8 +155,15 @@
             goNav(index, row, vid){
               this.$router.push({ name: 'monitoring', params: { vid: vid }})
             },
-            getRecord(offset, limit){
-                getView({offset: offset, limit: limit}).then(res => {
+            getRecord(offset, limit, field){
+                let where = {
+                    offset: offset,
+                    limit: limit,
+                };
+                if (field){
+                    Object.assign(where,field)
+                }
+                getView(where).then(res => {
                     if (res.code == 0){
                         this.totalCount = Number(res.data.totalCount);
                         this.tableData = res.data['data']
@@ -205,10 +212,22 @@
                 console.log(index, row);
             },
             handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
+                // console.log(`每页 ${val} 条`);
+                let offset = 0;
+                let limit = val;
+                this.offset = offset;
+                this.limit = limit;
+                this.getRecord(this.offset, this.limit, this.searchForm)
             },
             handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
+                // console.log(`当前页: ${val}`);
+                if (val == 1){
+                    let offset = 0;
+                    this.getRecord(offset, this.limit, this.searchForm)
+                } else{
+                    this.offset = this.limit * (val - 1);
+                    this.getRecord(this.offset, this.limit, this.searchForm)
+                }
             },
             onAdd(){
                 let pid = this.form.pid;
@@ -225,7 +244,11 @@
                 } else{
                     this.$message('请填写完整星号项')
                 }
-            }
+            },
+            // 搜索工程
+            searchProject(val){
+                this.getRecord(this.offset, this.limit, this.searchForm)
+            },
         },
         mounted() {
             getProjectList().then(res =>{
@@ -233,7 +256,7 @@
                     this.projects = res.data
                 }
             });
-            this.getRecord(this.offset, this.limit)
+            this.getRecord(this.offset, this.limit, this.searchForm)
         }
     }
 </script>

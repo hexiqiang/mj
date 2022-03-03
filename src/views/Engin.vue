@@ -377,10 +377,7 @@
             },
             // 搜索工程
             searchProject(val){
-                console.log(val)
-                searchPro({id: val}).then(res => {
-                    this.tableData = res.data;
-                })
+                this.getRecord(this.offset,this.limit,this.form);
             },
             clickRefresh(){
                 this.$router.go(0)
@@ -694,12 +691,25 @@
 
             },
             handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
+                // console.log(`每页 ${val} 条`);
+                let offset = 0;
+                let limit = val;
+                this.offset = offset;
+                this.limit = limit;
+                this.getRecord(this.offset, this.limit, this.form)
             },
             handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
+                // console.log(`当前页: ${val}`);
+                if (val == 1){
+                    let offset = 0;
+                    this.getRecord(offset, this.limit, this.form)
+                } else{
+                    this.offset = this.limit * (val - 1);
+                    this.getRecord(this.offset, this.limit, this.form)
+                }
             },
             showGateway(row,expandedRows){
+                if (expandedRows.length == 0)return;
                 const $classTable = this.$refs.multipleTable;
                 if (expandedRows.length > 1) {
                     expandedRows.forEach(expandRow => {
@@ -728,6 +738,7 @@
                 }
             },
             showStream(row,expandedRows){
+                if (expandedRows.length == 0)return;
                 const $classTable = this.$refs.gatewayTable;
                 if (expandedRows.length > 1) {
                     this.streamTable = [];
@@ -754,21 +765,28 @@
                         }
                     });
                 }
-
-
+            },
+            getRecord(offset, limit, field){
+                let where = {
+                    offset: offset,
+                    limit: limit,
+                };
+                if (field){
+                    Object.assign(where,field)
+                }
+                getProjects(where).then(res => {
+                    if (res.code == 0){
+                        console.log(res.data);
+                        this.totalCount = Number(res.data.totalCount);
+                        this.tableData = res.data.data;
+                    }else{
+                        this.$message('请稍后，服务器忙！')
+                    }
+                })
             },
         },
         mounted() {
-            getProjects({offset: this.offset, limit: this.limit}).then(res => {
-                if (res.code == 0){
-                    this.totalCount = Number(res.data.totalCount);
-                    this.currentPage4 = res.data.page;
-                    this.tableData = res.data.data;
-                } else{
-                    this.$message('服务器忙，请稍后再试！');
-                }
-            });
-
+            this.getRecord(this.offset,this.limit,this.form);
             getProjectList().then(res => {
                 if (res.code == 0){
                     this.options = res.data;
