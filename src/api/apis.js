@@ -1,5 +1,6 @@
-import {get, post} from '../utils/requests'
+import {get, post, postFile} from '../utils/requests'
 export const getNavs = ()=> get('api/navs/getnavs',{}); // 获取导航栏
+export const getNavsLists = ()=> get('api/navs/navs',{}); // 获取导航栏
 export const getCsrf =() =>  get('api/user/csrf',{}); // 获取csfr
 
 export const getMembers =() =>  get('api/user/getmembers',{}); //获取用户资料
@@ -59,6 +60,14 @@ export const editMessage = data => post('api/message/edit',data); //编辑
 export const getMessage = data => get('api/message/lists',data); //查询
 export const delMessage = data => post('api/message/del',data); //删除
 
+//栏目设置管理
+export const addUserNav = data => post('api/userrule/add',data); //添加
+export const UserNavList = data => get('api/userrule/getnavs',data); //查询
+
+//项目设置管理
+export const addUserPro = data => post('api/userproject/add',data); //添加
+export const UserProList = data => get('api/userproject/getnavs',data); //查询
+
 //获取数据流云变量
 export const getCloudVal = data => get('api/api/datastreamofdev',data);
 //获取对应工程下的网关
@@ -85,7 +94,14 @@ export const  addViewJoinControl = data => post('api/viewmanagejoin/add',data);
 export const  delViewJoinControl = data => post('api/viewmanagejoin/del',data);
 //根据工程id查询该工程下的视图组件
 export const actionSearchView = data => get('api/viewmanage/search',data);
-getViewJoinControlList
+//配置系统设置
+export const addSetting = data => post('api/setting/add',data);
+//配置系统设置
+export const editSetting = data => post('api/setting/edit',data);
+//上传文件
+export const upFile = data => postFile('api/setting/upfile',data);
+//查询配置
+export const settingsys = data => get('api/setting/field',data);
 export default {
     getNavs
     ,getCsrf
@@ -143,4 +159,13 @@ export default {
     ,getMessage
     ,editMessage
     ,delMessage
+    ,addSetting
+    ,editSetting
+    ,upFile
+    ,settingsys
+    ,getNavsLists
+    ,addUserNav
+    ,UserNavList
+    ,addUserPro
+    ,UserProList
 }

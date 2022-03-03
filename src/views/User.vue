@@ -43,17 +43,17 @@
                                     size="mini"
                                     type="danger"
                                     class="add-call"
-                                    @click="userRule = true">栏目管理</el-button>
+                                    @click="userRule = true;setNavForm.mid=scope.row.id;navs();selectUserNavList(scope.row.id)">栏目管理</el-button>
                             <el-button
                                     size="mini"
                                     type="danger"
                                     class="add-call"
-                                    @click="userProject = true">控制权限设置</el-button>
+                                    @click="userProject = true;setRuleForm.mid=scope.row.id;proRule();selectRuleNavList(scope.row.id)">控制权限设置</el-button>
                             <el-button
                                     size="mini"
                                     type="danger"
                                     class="add-call"
-                                    @click="userProject = true">工程管理</el-button>
+                                    @click="userProject = true;setProForm.mid=scope.row.id;pros();selectUserProList(scope.row.id)">工程管理</el-button>
                             <el-button
                                     size="mini"
                                     type="danger"
@@ -154,14 +154,15 @@
                 <el-button type="primary" @click="onAdd('formData')">保存</el-button>
             </div>
         </el-dialog>
-        <el-dialog class="baojing" width="33%" title="工程管理" :visible.sync="userProject">
+        <el-dialog class="baojing" width="33%" title="权限管理" :visible.sync="userProject">
             <template>
                 <el-transfer
                         :titles="['可选工程', '已选工程']"
                         filterable
                         filter-placeholder="请输入"
-                        v-model="value"
-                        :data="pros()">
+                        v-model="val"
+                        @change="ruleChange"
+                        :data="proLists">
                 </el-transfer>
             </template>
             <div slot="footer" class="dialog-footer">
@@ -169,26 +170,56 @@
                 <el-button type="primary" @click="addPro">保存</el-button>
             </div>
         </el-dialog>
-        <el-dialog class="baojing" width="33%" title="权限管理" :visible.sync="userRule">
+        <el-dialog class="baojing" width="33%" title="工程管理" :visible.sync="userProject">
+            <template>
+                <el-transfer
+                        :titles="['可选工程', '已选工程']"
+                        filterable
+                        filter-placeholder="请输入"
+                        v-model="value"
+                        @change="proChange"
+                        :data="proLists">
+                </el-transfer>
+            </template>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="userProject = false">取 消</el-button>
+                <el-button type="primary" @click="addPro">保存</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog class="baojing" width="33%" title="栏目管理" :visible.sync="userRule">
             <template>
                 <el-transfer
                         :titles="['可选栏目', '已选栏目']"
                         filterable
                         filter-placeholder="请输入"
                         v-model="selectNav"
-                        :data="navs()">
+                        :data="navsList"
+                        @change="handleChange"
+                >
                 </el-transfer>
             </template>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="userRule = false">取 消</el-button>
-                <el-button type="primary" @click="addRule">保存</el-button>
+                <el-button type="primary" @click="saveNav">保存</el-button>
             </div>
         </el-dialog>
     </div>
 </template>
 
 <script>
-    import { postUser, getMembers, editUser, delmember, changestatus} from "../api/apis";
+    import {
+        postUser,
+        getMembers,
+        editUser,
+        delmember,
+        changestatus,
+        getNavsLists,
+        addUserNav,
+        UserNavList,
+        getProjectList,
+        addUserPro
+        ,UserProList
+    } from "../api/apis";
 
     export default {
         name: "User",
@@ -226,21 +257,7 @@
                     ],
                 },
                 currentPage4: 1,
-                tableData: [{
-                    member: 'admin',
-                    phone: '13800138000',
-                    is_admin: '是',
-                    mail: '',
-                    note: '',
-                    status: true,
-                },{
-                    member: 'test',
-                    phone: '13800138001',
-                    is_admin: '否',
-                    mail: '',
-                    note: '',
-                    status: true,
-                }],
+                tableData: [],
                 userPro:[
                     {
                         project: '温氏集团',
@@ -248,20 +265,24 @@
                     }
                 ],
                 multipleSelection: [],
-                value: [],
+                //栏目
                 selectNav: [],
+                navsList: [],
+                setNavForm: [],
+                //工程
+                proLists: [],
+                setProForm: [],
+                value: [],
+                //工程开关
+                setRuleForm: [],
+                ruleLists: [],
+                val:[],
             }
         },
         methods:{
             dialogForm(){
                 this.dialogFormVisible = true;
                 this.title = '添加用户';
-                // getCsrf().then(data => {
-                //     if (data.code == 0){
-                //         this.formData._csrf = data.data._csrf;
-                //         console.log(data.data)
-                //     }
-                // });
             },
             clickRefresh(){
                 this.$router.go(0)
@@ -402,32 +423,124 @@
                 });
 
             },
-            addPro(){
-
-            },
-            addRule(){
+            proRule(){
 
             },
             pros(){
-                var city = ['温氏集团', '从化温泉', '中山温泉', '惠州温泉', '恒大猪场', '长隆集团', '隆基广场'];
-                var datas = this.selectData(city);
-                return datas
+                getProjectList().then(res => {
+                    if (res.code == 0){
+                        var datas = this.projectData(res.data);
+                        this.proLists = datas
+                    }
+                })
+
             },
             navs(){
-                var navs = ['工程管理', '监控视图管理', '报警管理', '惠州温泉', '联控管理', '监控视图', '曲线报表', '报警记录', '控制记录', '联控记录', '网关在线记录', '用户管理', '消息管理', 'API接口设置', '系统设置'];
-                var datas = this.selectData(navs);
-                return datas
+                getNavsLists().then(res => {
+                    var datas = this.selectData(res.data);
+                    this.navsList = datas
+                });
             },
-            selectData(arr){
-                const datas = [];
+            projectData(arr){
+                let datas = [];
                 arr.forEach((a, i) => {
                     datas.push({
-                        label: a,
-                        key: i
+                        id: a.id,
+                        key: a.id,
+                        label: a.project_name
                     });
                 });
                 return datas;
-            }
+            },
+            selectData(arr){
+                let datas = [];
+                arr.forEach((a, i) => {
+                    datas.push({
+                        id: a.id,
+                        key: a.id,
+                        label: a.name
+                    });
+                });
+                return datas;
+            },
+            handleChange(value, direction, movedKeys) {
+                this.setNavForm.nid = this.selectNav;
+            },
+            proChange(value, direction, movedKeys) {
+                this.setProForm.pid = this.value;
+            },
+            ruleChange(value, direction, movedKeys) {
+                this.setRuleForm.pid = this.val
+            },
+            selectUserNavList(id){
+                UserNavList({mid:id}).then(res => {
+                    if (res.code == 0){
+                        let datas = this.selectData(res.data)
+                        datas.forEach((i,j) => {
+                            this.navsList.forEach((n,m) => {
+                                if (i.id == n.id){
+                                    this.selectNav.push(n.key)
+                                }
+                            })
+                        })
+                    }else{
+                        this.selectNav = [];
+                    }
+                })
+            },
+            selectUserProList(id){
+                let _this = this;
+                UserProList({mid:id}).then(res => {
+                    if (res.code == 0){
+                        let datas = _this.projectData(res.data);
+                        datas.forEach((i,j) => {
+                            this.proLists.forEach((n,m) => {
+                                if (i.id == n.id){
+                                    _this.value.push(n.key)
+                                }
+                            })
+                        })
+                    }else{
+                        this.value = [];
+                    }
+                })
+            },
+            selectRuleNavList(id){
+                UserNavList({mid:id}).then(res => {
+                    if (res.code == 0){
+                        let datas = this.selectData(res.data)
+                        datas.forEach((i,j) => {
+                            this.navsList.forEach((n,m) => {
+                                if (i.id == n.id){
+                                    this.selectNav.push(n.key)
+                                }
+                            })
+                        })
+                    }else{
+                        this.selectNav = [];
+                    }
+                })
+            },
+            saveNav(){
+                addUserNav(this.setNavForm).then(res => {
+                    if (res.code == 0){
+                        this.$message({type:'success', message:res.msg})
+                        this.clickRefresh()
+                    } else{
+                        this.$message({type:'waring',message:res.msg})
+                    }
+                })
+            },
+            addPro(){
+                addUserPro(this.setProForm).then(res => {
+                    if (res.code == 0){
+                        this.$message({type:'success', message:res.msg});
+                        this.clickRefresh()
+                    } else{
+                        this.$message({type:'waring',message:res.msg})
+                    }
+                })
+            },
         },
         mounted() {
             getMembers().then(res => {
@@ -436,8 +549,7 @@
                 } else{
                     this.$message(res.msg)
                 }
-
-            })
+            });
         }
     }
 </script>

@@ -80,6 +80,14 @@
         },
     }
 </script>
-<style>
-
+<style lang="scss">
+    .el-aside{
+        .el-menu-vertical-demo{
+            background: #324157;
+        }
+        .el-menu{
+            background-color: #324157;
+            height: 100%;
+        }
+    }
 </style>

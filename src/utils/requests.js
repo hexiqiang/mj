@@ -131,3 +131,15 @@ export function post(url, params) {
             })
     });
 }
+
+export function postFile(url, params) {
+    return new Promise((resolve, reject) => {
+        axios.post(url, params, {headers: {'Content-Type': 'multipart/form-data'}})
+            .then(res => {
+                resolve(res.data);
+            })
+            .catch(err => {
+                reject(err.data)
+            })
+    });
+}
