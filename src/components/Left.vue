@@ -41,7 +41,8 @@
                 disable: true,
                 tabNav: [],
                 navs: JSON.parse(sessionStorage.getItem('navs')) ? JSON.parse(sessionStorage.getItem('navs')) : [],
-                columns: []
+                columns: [],
+                mid: sessionStorage.getItem('mid')
             }
         },
         props:['isCollapse'],
@@ -72,7 +73,7 @@
             },
         },
         mounted(){
-            getNavs().then(data => {
+            getNavs({mid: sessionStorage.getItem('mid')}).then(data => {
                 if (data.code == 0){
                     this.columns = data.data
                 }

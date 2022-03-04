@@ -9,7 +9,7 @@ if (process.env.NODE_ENV == 'development') {
 } else if (process.env.NODE_ENV == 'debug') {
     axios.defaults.baseURL = '';
 } else if (process.env.NODE_ENV == 'production') {
-    axios.defaults.baseURL = 'http://yii.idyxy.top/?r=';
+    axios.defaults.baseURL = 'http://yii.idyxy.top';
 }
 
 // 请求超时时间
@@ -103,6 +103,7 @@ axios.interceptors.response.use(
  * @param {Object} params [请求时携带的参数]
  */
 export function get(url, params){
+    // Object.assign(params,{mid: sessionStorage.getItem('mid')})
     return new Promise((resolve, reject) =>{
         axios.get(url, {
             params: params

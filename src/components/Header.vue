@@ -5,7 +5,7 @@
         <span>
         <el-dropdown  @command="loginOut">
           <span class="el-dropdown-link">
-            王小虎<i class="el-icon-arrow-down el-icon--right"></i>
+            {{member}}<i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown" >
             <el-dropdown-item icon="el-icon-setting" command="seting">设置</el-dropdown-item>
@@ -19,6 +19,11 @@
 <script>
     export default {
         name: "Header",
+        data(){
+          return{
+              member: sessionStorage.getItem('username')
+          }
+        },
         props:['isCollapse'],
         methods:{
             openNav(isopen){

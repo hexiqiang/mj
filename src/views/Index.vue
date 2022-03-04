@@ -33,6 +33,7 @@
 </template>
 
 <script>
+    import {checklogin} from "../api/apis";
     // @ is an alias to /src
     import Left from '@/components/Left'
     import Header from '@/components/Header'
@@ -76,7 +77,7 @@
                 }
             },
             getNavs(data){
-                console.log(data)
+                // console.log(data)
                 this.navs = data;
             },
             selectTag(index){
@@ -85,19 +86,32 @@
             cl(index){
                 this.navs.splice(index, 1);
                 if (index - 1 >= 0){
-                    console.log(index,222222)
+                    // console.log(index,222222)
                     this.navsIndex = index-1
                     var url = this.navs[index - 1].path;
                     this.$router.push(url)
                 }else{
-                    console.log(index, 111111)
+                    // console.log(index, 111111)
                     this.navsIndex = 1;
                     var url = this.navs[0].path;
                     this.$router.push(url)
                 }
-
-            }
+            },
+            checkLogin(){
+                let _this = this;
+                checklogin({token:sessionStorage.getItem('mtoken'),mid:sessionStorage.getItem('mid')}).then(res => {
+                    if (res.code == 0) {
+                        this.$router.push('/login')
+                    }
+                })
+            },
         },
+        mounted() {
+            setTimeout(() => {
+                this.checkLogin()
+            },1000);
+
+        }
     }
 </script>
 <style lang="scss">

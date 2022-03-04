@@ -1,7 +1,7 @@
 import {get, post, postFile} from '../utils/requests'
 
-export const getNavs = () => get('api/navs/getnavs', {}); // 获取导航栏
-export const getNavsLists = () => get('api/navs/navs', {}); // 获取导航栏
+export const getNavs = data => get('api/navs/getnavs', data); // 获取导航栏
+export const getNavsLists = data => get('api/navs/navs', data); // 获取导航栏
 export const getCsrf = () => get('api/user/csrf', {}); // 获取csfr
 
 export const getMembers = data => get('api/user/getmembers', data); //获取用户资料
@@ -123,6 +123,8 @@ export const totaljoin = data => get('api/total/totaljoin', data);
 
 //登录
 export const login = data => post('api/login/login', data);
+//检测登录
+export const checklogin = data => post('api/login/checklogin',data);
 export default {
     getNavs
     , getCsrf
@@ -198,4 +200,5 @@ export default {
     , totaljoin
     , totalcontrol
     , login
+    ,checklogin
 }

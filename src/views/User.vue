@@ -102,7 +102,7 @@
             </el-col>
 
         </el-col>
-        <el-dialog v-if="setRuleForm.mid==rid" class="baojing" :title="title" :visible.sync="dialogFormVisible">
+        <el-dialog  class="baojing" :title="title" :visible.sync="dialogFormVisible">
             <el-form :model="formData" ref="formData" :rules="rules">
                 <el-col :span="24">
                     <el-col :span="8">
@@ -155,7 +155,7 @@
                 <el-button type="primary" @click="onAdd('formData')">保存</el-button>
             </div>
         </el-dialog>
-        <el-dialog class="baojing" width="33%" title="权限管理" :visible.sync="ruleProject">
+        <el-dialog v-if="setRuleForm.mid==rid" class="baojing" width="33%" title="权限管理" :visible.sync="ruleProject">
             <template>
                 <el-transfer
                         :titles="['可选工程', '已选工程']"

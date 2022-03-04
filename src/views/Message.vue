@@ -114,6 +114,7 @@
                     title: '',
                     content: '',
                     status: true,
+                    mid: sessionStorage.getItem('mid')
                 },
                 currentPage: 1,
                 tableData: [],
@@ -121,7 +122,8 @@
                 totalCount: 0,
                 offset: 0,
                 limit: 10,
-                title: ''
+                title: '',
+                mid: sessionStorage.getItem('mid')
             }
         },
         methods: {
@@ -133,6 +135,7 @@
                 let where = {
                     offset: offset,
                     limit: limit,
+                    mid: this.mid
                 };
                 if (field){
                     Object.assign(where,field)
