@@ -5,11 +5,11 @@ import store from '../store/index'
 
 // 环境的切换
 if (process.env.NODE_ENV == 'development') {
-    axios.defaults.baseURL = 'http://yii.cc/?r=';
+    axios.defaults.baseURL = '';
 } else if (process.env.NODE_ENV == 'debug') {
     axios.defaults.baseURL = '';
 } else if (process.env.NODE_ENV == 'production') {
-    axios.defaults.baseURL = 'http://yii.idyxy.top';
+    axios.defaults.baseURL = '';
 }
 
 // 请求超时时间
