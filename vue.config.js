@@ -8,7 +8,7 @@ module.exports = {
         proxy: {
             "/api/": {
                 //真实转换成的后台请求地址，别忘了加http(https)
-                target: "http://yii.idyxy.top",
+                target: "http://yii.cc",
                 changeOrigin: true,
                 ws:true,
                 pathRewrite: {//重定向

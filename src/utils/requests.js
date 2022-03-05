@@ -2,7 +2,7 @@ import axios from 'axios';
 import QS from 'qs';
 import { Message } from 'element-ui';
 import store from '../store/index'
-
+import router from '../router'
 // 环境的切换
 if (process.env.NODE_ENV == 'development') {
     axios.defaults.baseURL = '';
@@ -17,7 +17,8 @@ axios.defaults.timeout = 10000;
 
 // post请求头
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8';
-
+// axios.defaults.headers.post['_csrf'] = store.state.csrf;
+// console.log(store.state.csrf)
 // 请求拦截器
 axios.interceptors.request.use(
     config => {
@@ -65,8 +66,8 @@ axios.interceptors.response.use(
                         forbidClick: true
                     });
                     // 清除token
-                    localStorage.removeItem('token');
-                    store.commit('loginSuccess', null);
+                    localStorage.removeItem('mtoken');
+                    // store.commit('loginSuccess', null);
                     // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
                     setTimeout(() => {
                         router.replace({

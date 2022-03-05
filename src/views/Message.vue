@@ -100,6 +100,7 @@
         ,editMessage
         ,delMessage
         ,getMessage
+        ,getCsrf
     } from "../api/apis";
 
     export default {
@@ -123,7 +124,8 @@
                 offset: 0,
                 limit: 10,
                 title: '',
-                mid: sessionStorage.getItem('mid')
+                mid: sessionStorage.getItem('mid'),
+                csrf: ''
             }
         },
         methods: {
@@ -219,8 +221,9 @@
                 }
             }
         },
-        mounted() {
+      mounted() {
             this.getRecord(this.offset, this.limit)
+
         }
     }
 </script>

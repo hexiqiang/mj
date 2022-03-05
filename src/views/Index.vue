@@ -97,19 +97,16 @@
                     this.$router.push(url)
                 }
             },
-            checkLogin(){
-                let _this = this;
-                checklogin({token:sessionStorage.getItem('mtoken'),mid:sessionStorage.getItem('mid')}).then(res => {
-                    if (res.code == 0) {
-                        this.$router.push('/login')
-                    }
-                })
-            },
+            // checkLogin(){
+            //     let _this = this;
+            //     checklogin({token:sessionStorage.getItem('mtoken'),mid:sessionStorage.getItem('mid')}).then(res => {
+            //         if (res.code == 0) {
+            //             this.$router.push('/login')
+            //         }
+            //     })
+            // },
         },
         mounted() {
-            setTimeout(() => {
-                this.checkLogin()
-            },1000);
 
         }
     }
