@@ -3,16 +3,16 @@
         <el-col :span="24">
             <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="数据报表" name="first">
-                    <DataTab></DataTab>
+                    <DataTab v-if="activeName == 'first'"></DataTab>
                 </el-tab-pane>
                 <el-tab-pane label="报警报表" name="second">
-                    <CallTab></CallTab>
+                    <CallTab  v-if="activeName == 'second'"></CallTab>
                 </el-tab-pane>
                 <el-tab-pane label="控制报表" name="third">
-                    <ControlTab></ControlTab>
+                    <ControlTab v-if="activeName == 'third'"></ControlTab>
                 </el-tab-pane>
                 <el-tab-pane label="联控报表" name="fourth">
-                    <JoinTab></JoinTab>
+                    <JoinTab v-if="activeName == 'fourth'"></JoinTab>
                 </el-tab-pane>
             </el-tabs>
         </el-col>

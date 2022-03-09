@@ -138,7 +138,8 @@
                 form:{
                     pid: '',
                     view_title: '',
-                    note: ''
+                    note: '',
+                    editer: sessionStorage.getItem('username')
                 },
                 projects: [],
                 tableData: [],

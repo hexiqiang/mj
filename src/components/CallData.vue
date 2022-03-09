@@ -45,7 +45,7 @@
                         tooltip-effect="dark">
                     <el-table-column type="selection" width="55"></el-table-column>
                     <el-table-column prop="project_name" sortable label="工程"></el-table-column>
-                    <el-table-column prop="call_gateway_name" sortable label="报警设备"></el-table-column>
+                    <el-table-column prop="gateway_name" sortable label="报警设备"></el-table-column>
                     <el-table-column prop="call_message" sortable  label="报警信息"></el-table-column>
                     <el-table-column prop="call_type" sortable width="120" label="报警方式"></el-table-column>
                     <el-table-column prop="call_date" sortable width="180" label="报警时间"></el-table-column>

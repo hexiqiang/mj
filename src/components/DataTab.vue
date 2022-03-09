@@ -1,47 +1,47 @@
 <template>
     <!--数据报表-->
-    <div class="datatab">
+    <div class="datatab" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="数据加载中">
         <el-col :span="24">
             <el-form ref="form" :model="form">
                 <el-col :span="3">
                     <template>
-                        <el-select v-model="form.project_name" filterable placeholder="请选择工程">
+                        <el-select v-model="form.pid" @change="selectGateway" filterable placeholder="请选择工程">
                             <el-option
                                     v-for="item in projects"
-                                    :key="item.value"
-                                    :label="item.label"
-                                    :value="item.value">
+                                    :key="item.id"
+                                    :label="item.project_name"
+                                    :value="item.id">
                             </el-option>
                         </el-select>
                     </template>
                 </el-col>
                 <el-col :span="3">
                 <template>
-                    <el-select v-model="form.gateway" filterable placeholder="请选择网关">
+                    <el-select v-model="form.gid" @change="selectStream" filterable placeholder="请选择网关">
                         <el-option
                                 v-for="item in gateway"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
+                                :key="item.id"
+                                :label="item.gateway_name"
+                                :value="item.id">
                         </el-option>
                     </el-select>
                 </template>
                 </el-col>
                 <el-col :span="3">
                 <template>
-                    <el-select v-model="form.stream" filterable placeholder="请选择数据流">
+                    <el-select v-model="form.sid" filterable placeholder="请选择数据流">
                         <el-option
                                 v-for="item in streams"
-                                :key="item.value"
-                                :label="item.label"
-                                :value="item.value">
+                                :key="item.id"
+                                :label="item.stream_name"
+                                :value="item.id">
                         </el-option>
                     </el-select>
                 </template>
                 </el-col>
                 <el-col :span="3">
                 <template>
-                    <el-select v-model="form.date" filterable placeholder="请选择周期">
+                    <el-select v-model="form.days" filterable placeholder="请选择周期">
                         <el-option
                                 v-for="item in dates"
                                 :key="item.value"
@@ -78,7 +78,7 @@
                 </template>
                 </el-col>
                 <el-col :span="1">
-                    <el-button type="primary" >查询</el-button>
+                    <el-button type="primary" @click="search">查询</el-button>
                 </el-col>
             </el-form>
         </el-col>
@@ -89,7 +89,7 @@
                         最小值
                     </el-col>
                     <el-col :span="12" class="cl-black">
-                        0.55米
+                        {{min}}
                     </el-col>
                 </el-col>
                 <el-col :span="24">
@@ -97,7 +97,7 @@
                         平均值
                     </el-col>
                     <el-col :span="12" class="cl-black">
-                        0.55米
+                        {{agv}}
                     </el-col>
                 </el-col>
             </el-col>
@@ -107,7 +107,7 @@
                         最大值
                     </el-col>
                     <el-col :span="12" class="cl-black">
-                        2800米
+                        {{max}}
                     </el-col>
                 </el-col>
                 <el-col :span="24">
@@ -115,112 +115,123 @@
                         区间值
                     </el-col>
                     <el-col :span="12" class="cl-black">
-                        0.55米
+                        {{section}}
                     </el-col>
                 </el-col>
             </el-col>
         </el-col>
         <el-col :span="24">
+            <el-col :span="24" style="position: relative;">
+                <div class="doing-do">
+                    <i class="iconfont icon-a-quxiantushuju" @click="showLine=true; showZhu=false;showZhuLine=false"></i>
+                    <i class="iconfont icon-tubiao-zhuzhuangtu" @click="showLine=false; showZhu=true;showZhuLine=false"></i>
+                    <i class="iconfont icon-tubiao" @click="showLine=false; showZhu=false; showZhuLine=true;"></i>
+                    <i class="iconfont icon-refresh"></i>
+                    <i class="iconfont icon-xiazaidaoru" @click="exportChart"></i>
+                </div>
+            </el-col>
             <ve-line
+                    ref="chart"
+                    v-if="showLine"
                     height="500px"
                     :title="{text: '数据报表流量'}"
                     :set-option-opts="false"
-                    :data="getLineData()"
+                    :data="lineData"
                     :data-zoom="{ type: 'slider' }">
             </ve-line>
+            <ve-histogram
+                    v-if="showZhu"
+                    height="500px"
+                    :title="{text: '数据报表流量'}"
+                    :set-option-opts="false"
+                    :data="lineData"
+                    :data-zoom="{ type: 'slider' }"
+            ></ve-histogram>
+            <ve-histogram
+                    v-if="showZhuLine"
+                    height="500px"
+                    :title="{text: '数据报表流量'}"
+                    :set-option-opts="false"
+                    :settings="{ showLine: ['比率']}"
+                    :data="lineData"
+                    :data-zoom="{ type: 'slider' }"
+            ></ve-histogram>
         </el-col>
         <el-col :span="24">
-            <el-table :data="tableData" highlight-current-row border>
-                <el-table-column prop="gateway" label="网关" align="center" class="compileNameFather" width="230">
+            <div style="float: right;">
+                <el-button type="primary" @click="exportPathMethod">导出</el-button>
+                <el-button type="default" v-print="'#print_demo'">打印</el-button>
+            </div>
+        </el-col>
+        <el-col :span="24">
+            <el-table id="print_demo" :data="tableData" highlight-current-row border>
+                <el-table-column prop="gateway_name" label="网关" align="center" class="compileNameFather" width="230">
                 </el-table-column>
-                <el-table-column prop="stream" label="数据流"  align="center">
+                <el-table-column prop="stream_name" label="数据流"  align="center">
                 </el-table-column>
-                <el-table-column  prop="date" label="时间" align="center">
+                <el-table-column  prop="get_date" label="时间" align="center">
                 </el-table-column>
                 <el-table-column label="历史数值" prop="historical_value" align="center">
                     <template slot-scope="scope">
                         <div class='headerFirst'>
-                            {{scope.row.historical_value}}<i class="el-icon-edit-outline eidtIcon" @click="tableDbEdit(scope.$index)"></i>
+                            {{scope.row.value}}<i class="el-icon-edit-outline eidtIcon" @click="tableDbEdit(scope.$index)"></i>
                         </div>
                     </template>
                 </el-table-column>
                 <el-table-column prop="status" label="状态" align="center"></el-table-column>
             </el-table>
+            <el-col :span="24">
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 30, 40]"
+                        :page-size="10"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalCount">
+                </el-pagination>
+            </el-col>
         </el-col>
     </div>
 </template>
 
 <script>
+    import FileSaver from "file-saver";
+    import {
+        getProjectList
+        ,getProjectGateway
+        ,getGatewayStream
+        ,Getstreamrecord
+        ,Getstreamrecorddatas
+    } from "../api/apis";
+
     export default {
         name: "DataTab",
         data() {
             return {
-                projects: [{
-                    value: '祥顺综合园',
-                    label: '祥顺综合园'
-                }, {
-                    value: '怀化水利',
-                    label: '怀化水利'
-                }],
-                gateway: [
-                    {
-                        value: '1#水池',
-                        label: '1#水池'
-                    }, {
-                        value: '2#水池',
-                        label: '2#水池'
-                    }
-                ],
-                streams: [
-                    {
-                        value: '1#水池',
-                        label: '1#水池'
-                    }, {
-                        value: '2#水池',
-                        label: '2#水池'
-                    }
-                ],
-                dates: [
-                    {
-                        value: '7天',
-                        label: '30天'
-                    }, {
-                        value: '2#水池',
-                        label: '2#水池'
-                    }
-                ],
-                times: [
-                    {
-                        value: '10分钟',
-                        label: '10分钟'
-                    }, {
-                        value: '20分钟',
-                        label: '20分钟'
-                    }
-                ],
-                form: {
-                    project_name: '',
-                    dates: '',
-                    date: '',
-                    gateway: '',
-                    stream: '',
-                    times: ''
+                showLine: true,
+                showZhu: false,
+                showZhuLine: false,
+                fullscreenLoading: false,
+                offset: 0,
+                limit: 10,
+                currentPage: 1,
+                totalCount: 0,
+                projects: [],
+                gateway: [],
+                streams: [],
+                dates: [ {  value: '7', label: '近7天' }, { value: '5', label: '近5天' }, { value: '3', label: '近3天' }, { value: '1', label: '近1天' } ],
+                times: [ { value: '10', label: '10分钟' }, { value: '30', label: '30分钟'} , { value: '60', label: '1小时'} , { value: '360', label: '6小时'} , { value: '720', label: '12小时'} , { value: '1440', label: '1天'} ],
+                form: {  pid: '', gid: '', sid: '', dates:'', days: '7', times: '10' },
+                tableData: [],
+                lineData:{
+                    columns: ["日期", "流量"],
+                    rows: []
                 },
-                tableData: [
-                    {
-                        gateway: '怀化水利',
-                        stream: '怀化水利',
-                        date: '2021-12-12',
-                        historical_value: '0.55',
-                        status: '正常',
-                    },{
-                        gateway: '怀化水利',
-                        stream: '怀化水利',
-                        date: '2021-12-13',
-                        historical_value: '0.55',
-                        status: '正常',
-                    }
-                ]
+                min:0,
+                max: 0,
+                agv: 0,
+                section: 0
             }
         },
         methods: {
@@ -258,28 +269,160 @@
                     ibtuIcon.onclick = () => {
                         this.tableDbEdit(index);
                     }
-                    console.log(this.tableData[index].historical_value)
                 }
             },
-            getLineData() {
-                let lineData = {
-                    columns: ["日期", "流量"],
-                    rows: [
-                        {日期: "2022-01-12", 流量: 1391},
-                        {日期: "2022-01-13", 流量: 1324},
-                        {日期: "2022-01-14", 流量: 1221},
-                        {日期: "2022-01-15", 流量: 1234},
-                        {日期: "2022-01-16", 流量: 8871},
-                        {日期: "2022-01-17", 流量: 2341},
-                        {日期: "2022-01-18", 流量: 1451},
-                        {日期: "2022-01-19", 流量: 3421},
-                        {日期: "2022-01-20", 流量: 4231},
-                        {日期: "2022-01-21", 流量: 1241},
-                        {日期: "2022-01-22", 流量: 1391}
-                    ]
+            getProject(){
+                getProjectList().then(res =>{
+                    if (res.code == 0){
+                        this.projects = res.data
+                    }
+                })
+            },
+            selectGateway(val){
+                this.gateway = [];
+                this.form.gid = '';
+                this.$forceUpdate();
+                getProjectGateway({pid: val}).then(res =>{
+                    if (res.code == 0){
+                        this.gateway = res.data
+                    }
+                })
+            },
+            selectStream(val){
+                this.streams = [];
+                this.form.sid = '';
+                this.$forceUpdate();
+                getGatewayStream({gid: val}).then(res =>{
+                    if (res.code == 0){
+                        this.streams = res.data
+                    }
+                })
+            },
+            search(){
+                this.lineData.rows = [];
+                this.min = 0;
+                this.max = 0;
+                this.agv = 0;
+                this.section = 0;
+                this.fullscreenLoading = true;
+                this.getRecord(this.offset, this.limit);
+                this.form.start = Array.isArray(this.form.dates) ? this.form.dates[0] : '';
+                this.form.end = Array.isArray(this.form.dates) ? this.form.dates[1] : '';
+                if (Array.isArray(this.form.dates)) {
+                    delete this.form.days;
+                }else{
+                    this.form.days = this.form.days
+                }
+                delete this.form.dates;
+                if (this.form.sid == ''){
+                    this.$message('请选择数据流')
+                }
+                Getstreamrecord(this.form).then(res => {
+                    this.fullscreenLoading = false;
+                    if (res.code == 0){
+                        this.lineData.rows = res.data.data;
+                        this.min = res.data.min;
+                        this.max = res.data.max;
+                        this.agv = res.data.agv;
+                        this.section = res.data.section;
+                    }
+                },e => {
+                    this.fullscreenLoading = false;
+                    this.$message('请求超时')
+                })
+            },
+            getRecord(offset, limit, field){
+                let where = {
+                    offset: offset,
+                    limit: limit,
+                    sid: this.form.sid
                 };
-                return lineData;
-            }
+                if (field){
+                    Object.assign(where,field)
+                }
+                Getstreamrecorddatas(where).then(res => {
+                    if (res.code == 0){
+                        console.log(res.data);
+                        this.totalCount = Number(res.data.totalCount);
+                        this.tableData = res.data.data;
+                    }else{
+                        this.$message('请稍后，服务器忙！')
+                    }
+                })
+            },
+            handleSizeChange(val) {
+                // console.log(`每页 ${val} 条`);
+                let offset = 0;
+                let limit = val;
+                this.offset = offset;
+                this.limit = limit;
+                this.getRecord(this.offset, this.limit, this.searchFiled)
+            },
+            handleCurrentChange(val) {
+                // console.log(`当前页: ${val}`);
+                if (val == 1){
+                    let offset = 0;
+                    this.getRecord(offset, this.limit, this.searchFiled)
+                } else{
+                    this.offset = this.limit * (val - 1);
+                    this.getRecord(this.offset, this.limit, this.searchFiled)
+                }
+            },
+            exportChart () {
+                if (typeof Blob !== 'function') {
+                    this.$alert('您的浏览器不支持！请使用最新版本chrome/firefox浏览器!')
+                    return
+                }
+                const canvas = this.$refs.chart.$el.getElementsByTagName('canvas')[0]
+                try {
+                    canvas.toBlob((blob) => {
+                        FileSaver.saveAs(
+                            blob,
+                            'chart.png'
+                        )
+                    })
+                } catch (e) {
+                    console.error(e)
+                    this.$alert('导出失败！')
+                }
+            },
+            printdata(){
+                print(11)
+            },
+            exportPathMethod() {
+                // 要导出的json数据
+                var jsonData = this.tableData
+                let str1 = ''
+                for (const i in jsonData[0]) {
+                    str1 += ',' + i
+                }
+                str1 = str1.substring(1)
+                str1 = str1 + '\n'
+                let str = `${str1}`
+                // 列标题，逗号隔开，每一个逗号就是隔开一个单元格
+                // let str = `用户名称,会员等级,最近购买时间,消费次数,消费金额,用户账号,订单均价\n`
+                // 增加\t为了不让表格显示科学计数法或者其他格式
+                for (let i = 0; i < jsonData.length; i++) {
+                    for (const item in jsonData[i]) {
+                        str += `${jsonData[i][item] + '\t'},`
+                    }
+                    str += '\n'
+                }
+
+                // encodeURIComponent解决中文乱码
+                const uri = 'data:text/csv;charset=utf-8,\ufeff' + encodeURIComponent(str)
+                // 通过创建a标签实现
+                var link = document.createElement('a')
+                link.href = uri
+                // 对下载的文件命名
+                link.download = '客户管理列表.xls'
+                document.body.appendChild(link)
+                link.click()
+            },
+        },
+        mounted() {
+            this.getProject();
+
         }
     }
 </script>
@@ -324,6 +467,16 @@
                 color: #808080;
             }
         }
-
+        .doing-do{
+            float: right;
+            i{
+                font-size: 20px;
+                margin-right: 20px;
+            }
+            position: absolute;
+            right: 0;
+            top: 4px;
+            z-index: 10000;
+        }
     }
 </style>

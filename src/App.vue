@@ -4,7 +4,14 @@
   </div>
 </template>
 <script>
-
+  export default {
+    created() {
+      let mtoken = sessionStorage.getItem('mtoken');
+      if (mtoken == 'null'){
+        this.$router.push('/login')
+      }
+    }
+  }
 </script>
 <style lang="scss">
   body{

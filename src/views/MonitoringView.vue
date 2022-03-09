@@ -22,7 +22,7 @@
                                     :name="'first_'+index"
                                     :key="'first_'+index"
                             >
-                                <MonData v-if="activeName == 'first_'+index" :setControl="setControl"/>
+                                <MonData v-if="activeName == 'first_'+index" :setControl="setControl" :dataset="dataset" :streamData="streamData" :streamDataDay="streamDataDay" :vid="vid" :note="note"/>
                             </el-tab-pane>
                         </el-tabs>
                     </template>
@@ -52,6 +52,11 @@
                 value: '',
                 views: [],
                 setControl:[],
+                dataset: [],
+                streamData: [],
+                streamDataDay:[],
+                vid: '',
+                note: ''
             }
         },
         methods:{
@@ -60,6 +65,11 @@
             },
             handleClick(tab, event) {
                 this.setControl = this.views[tab.index].views;
+                this.dataset = this.views[tab.index].data
+                this.streamData =  this.views[tab.index].stream
+                this.streamDataDay =  this.views[tab.index].streamDataDay;
+                this.vid =  this.views[tab.index].id;
+                this.note =  this.views[tab.index].note;
             },
             selectProject(val){
                 this.views = [];
@@ -67,7 +77,12 @@
                 actionSearchView({pid: val}).then(res => {
                     if (res.code == 0){
                         this.views = res.data;
-                        this.setControl = res.data[0].views
+                        this.vid = res.data[0].id;
+                        this.setControl = res.data[0].views;
+                        this.dataset = res.data[0].data;
+                        this.streamData = res.data[0].stream;
+                        this.streamDataDay = res.data[0].daystream;
+                        this.note = res.data[0].note;
                     }else{
                         this.$message(res.msg);
                     }
@@ -76,6 +91,7 @@
 
         },
         mounted() {
+
             getProjectList().then(res => {
                 if (res.code == 0){
                     this.options = res.data

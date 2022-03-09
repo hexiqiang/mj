@@ -27,10 +27,10 @@
                              :legend="{left: '20%'}"></ve-line>
                 </div>
                 <div class="chart-box">
-                    <p><strong>用户反馈</strong> <span><small>最近7天</small></span>|<span><small>最近30天</small></span>|<span><small>全部</small></span>
+                    <p><strong>用户反馈</strong> <span><small @click="getTotalMessage(6)">最近7天</small></span>|<span><small @click="getTotalMessage(29)">最近30天</small></span>|<span><small>全部</small></span>
                         <el-button type="primary" icon="iconfont icon-tubiao-zhexiantu" size="mini"></el-button>
                         <el-button type="primary" size="mini" @click="">更多</el-button></p>
-                    <ve-line height="300px" :data="chartData1" :title="{text: '记录（条数）'}"
+                    <ve-line height="300px" :data="chartData3" :title="{text: '记录（条数）'}"
                              :legend="{left: '20%'}"></ve-line>
                 </div>
             </el-col>
@@ -40,7 +40,7 @@
 
 <script>
     // @ is an alias to /src
-    import { index, totalcall , totalcontrol , totaljoin } from "../api/apis";
+    import { index, totalcall , totalcontrol , totaljoin , totalmessage } from "../api/apis";
     import HomeHeader from "@/components/HomeHeader"
     import HomeMidden from "@/components/HomeMidden"
     import "echarts/lib/component/title";
@@ -67,6 +67,10 @@
                     rows: []
                 },
                 chartData2: {
+                    columns: ['日期', '条数'],
+                    rows: []
+                },
+                chartData3: {
                     columns: ['日期', '条数'],
                     rows: []
                 }
@@ -111,16 +115,24 @@
                         this.chartData1.rows = res.data
                     }
                 })
+            },
+            getTotalMessage(date){
+                totalmessage({day: date}).then(res => {
+                    if (res.code == 0){
+                        this.chartData3.rows = res.data
+                    }
+                })
             }
         },
         created(){
             this.getIndex();
+            let mtoken = sessionStorage.getItem('mtoken');
         },
         mounted() {
             this.getTotalCall(6);
             this.getTotalJoin(6);
             this.getTotalControl(6);
-            console.log(this.$store.state.token)
+            this.getTotalMessage(6);
         }
     }
 </script>

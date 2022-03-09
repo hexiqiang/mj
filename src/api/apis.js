@@ -120,11 +120,27 @@ export const totalcall = data => get('api/total/totalcall', data);
 export const totalcontrol = data => get('api/total/totalcontrol', data);
 //获取联控的曲线表
 export const totaljoin = data => get('api/total/totaljoin', data);
-
+//获取用户信息曲线表
+export const totalmessage = data => get('api/total/totalmessage', data);
 //登录
 export const login = data => post('api/login/login', data);
 //检测登录
 export const checklogin = data => post('api/login/checklogin',data);
+
+export const getProjectViewGateway = data => get('api/viewmanage/getprojectviewgateway',data);
+
+//提交视图设置的相关项
+export  const PostData = data => post('api/viewmanage/postdata',data);
+export  const Getsetting = data => get('api/viewmanage/getsetting',data);
+//提交视图上的文本数据
+export const Postnote = data => post('api/viewmanage/postnote',data);
+//获取曲线报表的数据流报表
+export  const Getstreamrecord = data => get('api/datas/getstreamrecord',data);
+//查询对应的历史数据
+export const  Getstreamrecorddatas = data => get('api/datas/getstreamrecorddatas',data);
+//查询报警历史数据
+export const Getcalldata = data => get('api/datas/getcalldata',data);
+export const Getcallrecords = data  => get('api/datas/getcallrecord',data);
 export default {
     getNavs
     , getCsrf
@@ -201,4 +217,12 @@ export default {
     , totalcontrol
     , login
     ,checklogin
+    ,getProjectViewGateway
+    ,PostData
+    ,Getsetting
+    ,Postnote
+    ,Getstreamrecord
+    ,Getstreamrecorddatas
+    ,Getcalldata
+    ,Getcallrecords
 }

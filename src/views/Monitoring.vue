@@ -18,72 +18,23 @@
             <el-col :span="24" class="mov-right">
                 <el-col :span="24" class="box-border" v-show="control[0].show">
                     <i class="el-icon-close cl-close" @click="delControl(control[0].vcid, 0)"></i>
-                    <p><i class="iconfont icon-sanjiao3"></i>数据展示组件</p>
-                    <el-col :span="24">
-                        <div class="project-box">
+                    <p>
+                        <i class="iconfont icon-sanjiao3"></i>数据展示组件 <el-button @click="formShowDialog = true;" type="primary" size="mini">添加</el-button>
+                    </p>
+                    <el-col :span="24"  v-if="show_data.length > 0">
+                        <div class="project-box" v-for="i in show_data">
                             <el-col :span="4">
                                 <i class="iconfont icon-yewei"></i>
                             </el-col>
                             <el-col :span="20">
                                 <el-col :span="24">
-                                    <el-col :span="12">1#水池液位</el-col>
-                                    <el-col :span="12">2022-02-11 15：25</el-col>
+                                    <el-col :span="12">{{i.stream_name}}</el-col>
+                                    <el-col :span="12">{{i.add_date}}</el-col>
                                 </el-col>
                                 <el-col :sapn="24">
-                                    <el-col :span="12">当前值：0.04米</el-col>
+                                    <el-col :span="12">当前值：{{i.record + '' + i.comp}}</el-col>
                                     <el-col :span="12">
                                         <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
-                                    </el-col>
-                                </el-col>
-                            </el-col>
-                        </div>
-                        <div class="project-box">
-                            <el-col :span="4">
-                                <i class="iconfont icon-yewei"></i>
-                            </el-col>
-                            <el-col :span="20">
-                                <el-col :span="24">
-                                    <el-col :span="12">1#水池液位</el-col>
-                                    <el-col :span="12">2022-02-11 15：25</el-col>
-                                </el-col>
-                                <el-col :sapn="24">
-                                    <el-col :span="12">当前值：0.04米</el-col>
-                                    <el-col :span="12">
-                                        <el-button size="mini" type="primary">趋势图</el-button>
-                                    </el-col>
-                                </el-col>
-                            </el-col>
-                        </div>
-                        <div class="project-box">
-                            <el-col :span="4">
-                                <i class="iconfont icon-yewei"></i>
-                            </el-col>
-                            <el-col :span="20">
-                                <el-col :span="24">
-                                    <el-col :span="12">1#水池液位</el-col>
-                                    <el-col :span="12">2022-02-11 15：25</el-col>
-                                </el-col>
-                                <el-col :sapn="24">
-                                    <el-col :span="12">当前值：0.04米</el-col>
-                                    <el-col :span="12">
-                                        <el-button size="mini" type="primary">趋势图</el-button>
-                                    </el-col>
-                                </el-col>
-                            </el-col>
-                        </div>
-                        <div class="project-box">
-                            <el-col :span="4">
-                                <i class="iconfont icon-yewei"></i>
-                            </el-col>
-                            <el-col :span="20">
-                                <el-col :span="24">
-                                    <el-col :span="12">1#水池液位</el-col>
-                                    <el-col :span="12">2022-02-11 15：25</el-col>
-                                </el-col>
-                                <el-col :sapn="24">
-                                    <el-col :span="12">当前值：0.04米</el-col>
-                                    <el-col :span="12">
-                                        <el-button size="mini" type="primary">趋势图</el-button>
                                     </el-col>
                                 </el-col>
                             </el-col>
@@ -92,37 +43,65 @@
                 </el-col>
                 <el-col :span="24" class="box-border" v-show="control[1].show">
                     <i class="el-icon-close cl-close" @click="delControl(control[1].vcid, 1)"></i>
-                    <p><i class="iconfont icon-sanjiao3"></i>数据监控组件</p>
-                    <el-col :span="24">
-                        <div class="project-box data-mon">
-                            <el-col :span="5">
-                                <i class="iconfont icon-yewei"></i>
-                            </el-col>
-                            <el-col :span="19">
-                                <el-col :span="12" class="left-24">
-                                    <el-col :span="24">1#水池液位</el-col>
-                                    <el-col :span="24">当前值：0.04米</el-col>
-                                    <el-col :span="24">
-                                        <el-form v-model="formStatus">
-                                            <el-switch class="switchStyle"
-                                                       v-model="formStatus.status"
-                                                       active-color="#1899EE"
-                                                       active-text="开启"
-                                                       @change="statusChange(scope.$index, scope.row)"
-                                                       inactive-color="#DBE0E6"
-                                                       inactive-text="关闭">
-                                            </el-switch>
-                                        </el-form>
+                    <p>
+                        <i class="iconfont icon-sanjiao3"></i>数据监控组件
+                        <el-button @click="formSetDialog = true;" type="primary" size="mini">添加</el-button>
+                    </p>
+                    <el-col :span="24" v-if="doing_type.length > 0">
+                        <template v-for="d in doing_type">
+                            <div class="project-box data-mon" v-if="d.doing_type == 1">
+                                <el-col :span="5">
+                                    <i class="iconfont icon-yewei"></i>
+                                </el-col>
+                                <el-col :span="19">
+                                    <el-col :span="12" class="left-24">
+                                        <el-col :span="24">{{d.stream_name}}</el-col>
+                                        <el-col :span="24">当前值：{{d.record + '' + d.comp}}</el-col>
+                                        <el-col :span="24">
+                                            <el-form v-model="formStatus">
+                                                <el-switch class="switchStyle"
+                                                           v-model="formStatus.status"
+                                                           active-color="#1899EE"
+                                                           active-text="开启"
+                                                           @change="statusChange(scope.$index, scope.row)"
+                                                           inactive-color="#DBE0E6"
+                                                           inactive-text="关闭">
+                                                </el-switch>
+                                            </el-form>
+                                        </el-col>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-col :span="24">{{d.add_date}}</el-col>
+                                        <el-col :span="24">
+                                            <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
+                                        </el-col>
                                     </el-col>
                                 </el-col>
-                                <el-col :span="12">
-                                    <el-col :span="24">2022-02-11 15：25</el-col>
-                                    <el-col :span="24">
-                                        <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
+                            </div>
+                            <div class="project-box data-mon"  v-if="d.doing_type == 2">
+                                <el-col :span="5">
+                                    <i class="iconfont icon-yewei"></i>
+                                </el-col>
+                                <el-col :span="19">
+                                    <el-col :span="12" class="left-24">
+                                        <el-col :span="24">{{d.stream_name}}</el-col>
+                                        <el-col :span="24">当前值：{{d.record + '' + d.comp}}</el-col>
+                                        <el-col :span="24">
+                                            <el-form v-model="formOrder" :inline="true" class="order-post">
+                                                <el-input size="mini" v-model="formOrder.order" placeholder="命令"></el-input>
+                                                <el-button type="mini">发送</el-button>
+                                            </el-form>
+                                        </el-col>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-col :span="24">{{d.add_date}}</el-col>
+                                        <el-col :span="24">
+                                            <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
+                                        </el-col>
                                     </el-col>
                                 </el-col>
-                            </el-col>
-                        </div>
+                            </div>
+                        </template>
                     </el-col>
                 </el-col>
                 <el-col :span="24" class="box-border" v-show="control[2].show">
@@ -405,7 +384,52 @@
                 <ve-line height="300px" :data="chartData" :title="{text: '记录（条数）'}" :legend="{left: '20%'}"></ve-line>
             </div>
         </el-dialog>
+        <el-dialog class="showStream" title="设置数据组件" :visible.sync="formShowDialog" width="400px">
+            <el-form :label-position="'left'"  label-width="100px" :inline="true" :model="formShow" class="demo-form-inline">
+                <el-input type="hidden" v-model="formShow.cid = 1" class="hide"></el-input>
+                <el-input type="hidden" v-model="formShow.is_data_show = 1" class="hide"></el-input>
+                <el-input type="hidden" v-model="formShow.vid = vid" class="hide"></el-input>
+                <el-form-item label="选择网关">
+                    <el-select @change="getGatewayStreamData" v-model="formShow.gid" placeholder="请选择网关">
+                        <el-option v-for="item in gateway" :label="item.gateway_name" :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="选择数据流">
+                    <el-select v-model="formShow.sid" placeholder="选择数据流">
+                        <el-option v-for="s in stream" :label="s.stream_name" :value="s.id"></el-option>
+                    </el-select>
+                </el-form-item>
 
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="formShowDialog = false">取 消</el-button>
+                <el-button type="primary" @click="addFormShow(1)">保存</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog class="showStream" title="设置控制组件" :visible.sync="formSetDialog" width="400px">
+            <el-form :label-position="'left'"  label-width="100px" :inline="true" :model="formShow" class="demo-form-inline">
+                <el-input type="hidden" v-model="formShow.cid = 2" class="hide"></el-input>
+                <el-input type="hidden" v-model="formShow.vid = vid" class="hide"></el-input>
+                <el-form-item label="选择网关">
+                    <el-select @change="getGatewayStreamData" v-model="formShow.gid" placeholder="请选择网关">
+                        <el-option v-for="item in gateway" :label="item.gateway_name" :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="选择数据流">
+                    <el-select v-model="formShow.sid" placeholder="选择数据流">
+                        <el-option v-for="s in stream" :label="s.stream_name" :value="s.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item  label="设置">
+                    <el-radio v-model="formShow.doing_type" label="1">开关</el-radio>
+                    <el-radio v-model="formShow.doing_type" label="2">下发命令</el-radio>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="formSetDialog = false">取 消</el-button>
+                <el-button type="primary" @click="addFormShow(2)">保存</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -415,6 +439,10 @@
         ,getViewJoinControlList
         ,addViewJoinControl
         ,delViewJoinControl
+        ,getProjectViewGateway
+        ,getGatewayStream
+        ,PostData
+        ,Getsetting
     } from "../api/apis";
 
     export default {
@@ -506,6 +534,7 @@
                 formStatus: {
                     status: ''
                 },
+                formOrder:{order: ''},
                 formUrl: [{
                     pid: '',
                     gid: '',
@@ -516,7 +545,23 @@
                 zoom: 13,
                 setControl: [],
                 getControl: [],
-                vid: this.$route.params.vid
+                vid: this.$route.params.vid,
+                gateway: [],
+                stream: [],
+                formShow: {
+                    gid: '',
+                    cid: '',
+                    vid: '',
+                    sid: '',
+                    doing_type: 0,
+                    is_data_show: 0,
+                    map_position: '',
+                },
+                formShowDialog: false,
+                formSetDialog: false,
+                show_data:[],
+                doing_type:[],
+                map_position:[],
             }
         },
         methods: {
@@ -595,6 +640,31 @@
                         this.$message(res.msg)
                     }
                 })
+            },
+            getGatewayStreamData(gid){
+                this.stream = [];
+                getGatewayStream({gid: gid}).then(res => {
+                    if (res.code == 0){
+                        this.stream = res.data
+                    }
+                });
+                this.$forceUpdate()
+            },
+            addFormShow(num){
+                if (num == 1){
+                    this.formShow.doing_type = '';
+                } else if(num == 2){
+                    this.formShow.is_data_show = '';
+                }
+                PostData(this.formShow).then(res => {
+                    if (res.code == 0){
+                        this.formShowDialog = false;
+                        this.formSetDialog = false;
+                        this.show_data = res.data['show_data'];
+                        this.doing_type = res.data['doing_type'];
+                        this.map_position = res.data['map_position'];
+                    }
+                })
             }
         },
         mounted() {
@@ -624,6 +694,19 @@
                     this.$message(res.msg)
                 }
             });
+            getProjectViewGateway({vid: this.vid}).then(res => {
+                this.gateway = [];
+                if (res.code ==0 ){
+                    this.gateway = res.data
+                }
+            })
+            Getsetting({vid: this.vid}).then(res => {
+                if (res.code == 0){
+                    this.show_data = res.data['show_data'];
+                    this.doing_type = res.data['doing_type'];
+                    this.map_position = res.data['map_position'];
+                }
+            })
         }
     }
 </script>
@@ -631,4 +714,22 @@
 <style lang="scss">
     @import "../assets/css/monitoring";
     @import "../assets/css/mon";
+    #mon .mov-view .mov-right {
+        height: inherit !important;
+        overflow-y: scroll !important;
+        border-radius: 4px !important;
+    }
+    .hidden-scroll{
+        bottom: 20px !important;
+    }
+    .hide{
+        display: none !important;
+    }
+    .order-post{
+        div{
+            float: left;
+            width: 60px;
+            margin-right: 10px;
+        }
+    }
 </style>

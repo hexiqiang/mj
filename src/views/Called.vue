@@ -7,7 +7,7 @@
                         <el-input v-model="form.keyword" placeholder="请输入搜索内容"></el-input>
                     </el-col>
                     <el-col :span="6">
-                    <el-button icon="el-icon-search"></el-button>
+                    <el-button icon="el-icon-search" @click="search"></el-button>
                     </el-col>
                 </el-form>
             </el-col>
@@ -95,7 +95,7 @@
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
-                        :current-page="currentPage4"
+                        :current-page="currentPage"
                         :page-sizes="[10, 20, 30]"
                         :page-size="10"
                         layout="total, sizes, prev, pager, next, jumper"
@@ -254,7 +254,7 @@
                     equation: '',
                     threshold: '',
                 },
-                currentPage4: 1,
+                currentPage: 1,
                 totalCount: 0,
                 tableData: [],
                 triggerData:[],
@@ -291,6 +291,24 @@
             },
             clickRefresh(){
                 this.$router.go(0)
+            },
+            getRecord(offset, limit, field){
+                let where = {
+                    offset: offset,
+                    limit: limit,
+                };
+                if (field){
+                    Object.assign(where,field)
+                }
+                getCall(where).then(res => {
+                    if (res.code == 0){
+                        this.totalCount = Number(res.data.totalCount);
+                        this.currentPage4 = res.data.page;
+                        this.tableData = res.data.data;
+                    } else{
+                        this.$message('服务器忙，请稍后再试！');
+                    }
+                });
             },
             handleEdit(index, row) {
                 this.dialogFormVisible = true;
@@ -370,10 +388,22 @@
                 console.log(index, row);
             },
             handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
+                // console.log(`每页 ${val} 条`);
+                let offset = 0;
+                let limit = val;
+                this.offset = offset;
+                this.limit = limit;
+                this.getRecord(this.offset, this.limit, this.form)
             },
             handleCurrentChange(val) {
-                console.log(`当前页: ${val}`);
+                // console.log(`当前页: ${val}`);
+                if (val == 1){
+                    let offset = 0;
+                    this.getRecord(offset, this.limit, this.form)
+                } else{
+                    this.offset = this.limit * (val - 1);
+                    this.getRecord(this.offset, this.limit, this.form)
+                }
             },
             //删除数据流
             streamHandleDelete(index, row) {
@@ -505,6 +535,7 @@
             },
             showTriggerTable(row,expandedRows) {
                 const $classTable = this.$refs.multipleTable;
+                if (expandedRows.length == 0)return;
                 if (expandedRows.length > 1) {
                     expandedRows.forEach(expandRow => {
                         if (row.id !== expandRow.id) {
@@ -540,18 +571,13 @@
                 console.info(this.multipleSelection);
                 // console.info(this.$refs.multipleTable.tableData);
                 // console.info(this.$refs.multipleTable);
+            },
+            search(){
+                this.getRecord(this.offset,this.limit,this.form);
             }
         },
         mounted() {
-            getCall({offset: this.offset, limit: this.limit}).then(res => {
-                if (res.code == 0){
-                    this.totalCount = Number(res.data.totalCount);
-                    this.currentPage4 = res.data.page;
-                    this.tableData = res.data.data;
-                } else{
-                    this.$message('服务器忙，请稍后再试！');
-                }
-            });
+            this.getRecord(this.offset,this.limit,this.form);
 
             getProjectList().then(res => {
                 if (res.code == 0){

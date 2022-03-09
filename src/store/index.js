@@ -5,12 +5,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    token: ''//'Bearer' + ' ' + sessionStorage.getItem('mtoken')
+    token: 'Bearer' + ' ' + sessionStorage.getItem('mtoken')
   },
   mutations: {
-    // increment(state, token) {
-    //   state.token = token
-    // },
   },
   actions: {
   },

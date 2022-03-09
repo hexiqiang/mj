@@ -1,113 +1,89 @@
 <template>
     <div  id="mon" class="mon">
-        <div class="hidden-scroll"></div>
         <el-col :span="24" class="mov-view">
-            <el-col :span="24" class="mov-right">
+            <el-col :span="24" class="mov-right" style="overflow-y: unset !important;">
                 <el-col :span="24" class="box-border" v-show="control[0].show">
                     <p><i class="iconfont icon-sanjiao3"></i>数据展示组件</p>
                     <el-col :span="24">
-                        <div class="project-box">
-                            <el-col :span="4">
-                                <i class="iconfont icon-yewei"></i>
-                            </el-col>
-                            <el-col :span="20">
-                                <el-col :span="24">
-                                    <el-col :span="12">1#水池液位</el-col>
-                                    <el-col :span="12">2022-02-11 15：25</el-col>
+                        <template v-if="dataset['show_data'].length > 0" v-for="i in dataset['show_data']">
+                            <div class="project-box">
+                                <el-col :span="4">
+                                    <i class="iconfont icon-yewei"></i>
                                 </el-col>
-                                <el-col :sapn="24">
-                                    <el-col :span="12">当前值：0.04米</el-col>
-                                    <el-col :span="12">
-                                        <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
+                                <el-col :span="20">
+                                    <el-col :span="24">
+                                        <el-col :span="12">{{i.stream_name}}</el-col>
+                                        <el-col :span="12">{{i.add_date}}</el-col>
+                                    </el-col>
+                                    <el-col :sapn="24">
+                                        <el-col :span="12">当前值：{{i.record + '' + i.comp}}</el-col>
+                                        <el-col :span="12">
+                                            <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
+                                        </el-col>
                                     </el-col>
                                 </el-col>
-                            </el-col>
-                        </div>
-                        <div class="project-box">
-                            <el-col :span="4">
-                                <i class="iconfont icon-yewei"></i>
-                            </el-col>
-                            <el-col :span="20">
-                                <el-col :span="24">
-                                    <el-col :span="12">1#水池液位</el-col>
-                                    <el-col :span="12">2022-02-11 15：25</el-col>
-                                </el-col>
-                                <el-col :sapn="24">
-                                    <el-col :span="12">当前值：0.04米</el-col>
-                                    <el-col :span="12">
-                                        <el-button size="mini" type="primary">趋势图</el-button>
-                                    </el-col>
-                                </el-col>
-                            </el-col>
-                        </div>
-                        <div class="project-box">
-                            <el-col :span="4">
-                                <i class="iconfont icon-yewei"></i>
-                            </el-col>
-                            <el-col :span="20">
-                                <el-col :span="24">
-                                    <el-col :span="12">1#水池液位</el-col>
-                                    <el-col :span="12">2022-02-11 15：25</el-col>
-                                </el-col>
-                                <el-col :sapn="24">
-                                    <el-col :span="12">当前值：0.04米</el-col>
-                                    <el-col :span="12">
-                                        <el-button size="mini" type="primary">趋势图</el-button>
-                                    </el-col>
-                                </el-col>
-                            </el-col>
-                        </div>
-                        <div class="project-box">
-                            <el-col :span="4">
-                                <i class="iconfont icon-yewei"></i>
-                            </el-col>
-                            <el-col :span="20">
-                                <el-col :span="24">
-                                    <el-col :span="12">1#水池液位</el-col>
-                                    <el-col :span="12">2022-02-11 15：25</el-col>
-                                </el-col>
-                                <el-col :sapn="24">
-                                    <el-col :span="12">当前值：0.04米</el-col>
-                                    <el-col :span="12">
-                                        <el-button size="mini" type="primary">趋势图</el-button>
-                                    </el-col>
-                                </el-col>
-                            </el-col>
-                        </div>
+                            </div>
+                        </template>
+
                     </el-col>
                 </el-col>
                 <el-col :span="24" class="box-border" v-show="control[1].show">
                     <p><i class="iconfont icon-sanjiao3"></i>数据监控组件</p>
                     <el-col :span="24">
-                        <div class="project-box data-mon">
-                            <el-col :span="5">
-                                <i class="iconfont icon-yewei"></i>
-                            </el-col>
-                            <el-col :span="19">
-                                <el-col :span="12" class="left-24">
-                                    <el-col :span="24">1#水池液位</el-col>
-                                    <el-col :span="24">当前值：0.04米</el-col>
-                                    <el-col :span="24">
-                                        <el-form v-model="formStatus">
-                                            <el-switch class="switchStyle"
-                                                       v-model="formStatus.status"
-                                                       active-color="#1899EE"
-                                                       active-text="开启"
-                                                       @change="statusChange(scope.$index, scope.row)"
-                                                       inactive-color="#DBE0E6"
-                                                       inactive-text="关闭">
-                                            </el-switch>
-                                        </el-form>
+                        <template  v-if="dataset['show_data'].length > 0" v-for="d in dataset['doing_type']">
+                            <div class="project-box data-mon" v-if="d.doing_type == 1">
+                                <el-col :span="5">
+                                    <i class="iconfont icon-yewei"></i>
+                                </el-col>
+                                <el-col :span="19">
+                                    <el-col :span="12" class="left-24">
+                                        <el-col :span="24">{{d.stream_name}}</el-col>
+                                        <el-col :span="24">当前值：{{d.record + '' + d.comp}}</el-col>
+                                        <el-col :span="24">
+                                            <el-form v-model="formStatus">
+                                                <el-switch class="switchStyle"
+                                                           v-model="formStatus.status"
+                                                           active-color="#1899EE"
+                                                           active-text="开启"
+                                                           @change="statusChange(scope.$index, scope.row)"
+                                                           inactive-color="#DBE0E6"
+                                                           inactive-text="关闭">
+                                                </el-switch>
+                                            </el-form>
+                                        </el-col>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-col :span="24">{{d.add_date}}</el-col>
+                                        <el-col :span="24">
+                                            <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
+                                        </el-col>
                                     </el-col>
                                 </el-col>
-                                <el-col :span="12">
-                                    <el-col :span="24">2022-02-11 15：25</el-col>
-                                    <el-col :span="24">
-                                        <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
+                            </div>
+                            <div class="project-box data-mon"  v-if="d.doing_type == 2">
+                                <el-col :span="5">
+                                    <i class="iconfont icon-yewei"></i>
+                                </el-col>
+                                <el-col :span="19">
+                                    <el-col :span="12" class="left-24">
+                                        <el-col :span="24">{{d.stream_name}}</el-col>
+                                        <el-col :span="24">当前值：{{d.record + '' + d.comp}}</el-col>
+                                        <el-col :span="24">
+                                            <el-form v-model="formOrder" :inline="true" class="order-post">
+                                                <el-input size="mini" v-model="formOrder.order" placeholder="命令"></el-input>
+                                                <el-button type="mini">发送</el-button>
+                                            </el-form>
+                                        </el-col>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-col :span="24">{{d.add_date}}</el-col>
+                                        <el-col :span="24">
+                                            <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
+                                        </el-col>
                                     </el-col>
                                 </el-col>
-                            </el-col>
-                        </div>
+                            </div>
+                        </template>
                     </el-col>
                 </el-col>
                 <el-col :span="24" class="box-border" v-show="control[2].show">
@@ -120,7 +96,7 @@
                                         <el-table
                                                 class="join_table"
                                                 ref="multipleTable"
-                                                :data="tableData"
+                                                :data="streamData"
                                                 border
                                                 @selection-change="handleSelectionChange"
                                                 :default-sort="{order: 'descending'}"
@@ -128,67 +104,67 @@
                                                 align="center"
                                                 style="width: 100%">
                                             <el-table-column
-                                                    prop="gateway"
+                                                    prop="gateway_name"
                                                     sortable
                                                     label="网关">
                                             </el-table-column>
                                             <el-table-column
-                                                    prop="name"
+                                                    prop="stream_name"
                                                     sortable
                                                     label="名称">
                                             </el-table-column>
                                             <el-table-column
-                                                    prop="company"
+                                                    prop="comp"
                                                     sortable
                                                     label="单位">
                                             </el-table-column>
-                                            <el-table-column label="工程标题（月份）" sortable>
+                                            <el-table-column  :label="streamData.length > 0 ? streamData[0].project_name : '' + '（月份）'" sortable>
                                                 <el-table-column
-                                                        prop="jan"
+                                                        prop="1"
                                                         label="1">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="feb"
+                                                        prop="2"
                                                         label="2">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="mar"
+                                                        prop="3"
                                                         label="3">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="apr"
+                                                        prop="4"
                                                         label="4">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="may"
+                                                        prop="5"
                                                         label="5">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="jun"
+                                                        prop="6"
                                                         label="6">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="jul"
+                                                        prop="7"
                                                         label="7">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="aug"
+                                                        prop="8"
                                                         label="8">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="sept"
+                                                        prop="9"
                                                         label="9">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="oct"
+                                                        prop="10"
                                                         label="10">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="nov"
+                                                        prop="11"
                                                         label="11">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="dec"
+                                                        prop="12"
                                                         label="12">
                                                 </el-table-column>
                                             </el-table-column>
@@ -205,75 +181,154 @@
                                         <el-table
                                                 class="join_table"
                                                 ref="multipleTable"
-                                                :data="tableDay"
+                                                :data="streamDataDay"
                                                 border
                                                 @selection-change="handleSelectionChange"
                                                 :default-sort="{order: 'descending'}"
                                                 tooltip-effect="dark"
                                                 style="width: 100%">
                                             <el-table-column
-                                                    prop="gateway"
+                                                    prop="gateway_name"
                                                     sortable
                                                     label="网关">
                                             </el-table-column>
                                             <el-table-column
-                                                    prop="name"
+                                                    prop="stream_name"
                                                     sortable
                                                     label="名称">
                                             </el-table-column>
                                             <el-table-column
-                                                    prop="company"
+                                                    prop="comp"
                                                     sortable
                                                     label="单位">
                                             </el-table-column>
-                                            <el-table-column label="工程标题（号）" sortable>
+                                            <el-table-column :label="streamDataDay.length > 0 ? streamDataDay[0].project_name : '' + '(号)'" sortable>
                                                 <el-table-column
-                                                        prop="jan"
+                                                        prop="1"
                                                         label="1">
                                                 </el-table-column>
+
                                                 <el-table-column
-                                                        prop="feb"
+                                                        prop="2"
                                                         label="2">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="mar"
+                                                        prop="3"
                                                         label="3">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="apr"
+                                                        prop="4"
                                                         label="4">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="may"
+                                                        prop="5"
                                                         label="5">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="jun"
+                                                        prop="6"
                                                         label="6">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="jul"
+                                                        prop="7"
                                                         label="7">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="aug"
+                                                        prop="8"
                                                         label="8">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="sept"
+                                                        prop="9"
                                                         label="9">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="oct"
+                                                        prop="10"
                                                         label="10">
                                                 </el-table-column>
                                                 <el-table-column
-                                                        prop="nov"
+                                                        prop="11"
                                                         label="11">
                                                 </el-table-column>
+
                                                 <el-table-column
-                                                        prop="dec"
+                                                        prop="12"
                                                         label="12">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="13"
+                                                        label="13">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="14"
+                                                        label="14">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="15"
+                                                        label="15">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="16"
+                                                        label="16">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="17"
+                                                        label="17">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="18"
+                                                        label="18">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="19"
+                                                        label="19">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="20"
+                                                        label="20">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="21"
+                                                        label="21">
+                                                </el-table-column>
+
+                                                <el-table-column
+                                                        prop="22"
+                                                        label="22">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="23"
+                                                        label="23">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="24"
+                                                        label="24">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="25"
+                                                        label="25">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="26"
+                                                        label="26">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="27"
+                                                        label="27">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="28"
+                                                        label="28">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="29"
+                                                        label="29">
+                                                </el-table-column>
+                                                <el-table-column
+                                                        prop="30"
+                                                        label="30">
+                                                </el-table-column>
+                                                <el-table-column
+                                                    prop="31"
+                                                    label="31">
                                                 </el-table-column>
                                             </el-table-column>
                                             <el-table-column label="操作" width="80">
@@ -316,9 +371,14 @@
                 <el-col :span="24" class="box-border" v-show="control[4].show">
                     <p><i class="iconfont icon-sanjiao3"></i>文本组件</p>
                     <el-col :span="24">
-                        <el-form ref="form" :model="formtext" label-width="80px">
+                        <el-form :label-position="'top'" ref="form" :model="formtext" label-width="80px">
+                            <el-form-item style="padding: 0 20px;">
                             <el-input type="textarea" v-model="formtext.note" placeholder="请输入备注信息" @blur="postFormText"
                                       height="200px"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="formtext.vid = vid; formtext.cid = 4; noteAdd();" style="float: right;margin-right: 20px">提交</el-button>
+                            </el-form-item>
                         </el-form>
                     </el-col>
                 </el-col>
@@ -389,6 +449,8 @@
 </template>
 
 <script>
+    import {Postnote} from "../api/apis";
+
     export default {
         name: "MomData",
         data(){
@@ -405,40 +467,6 @@
                 showView: false,
                 activeName: 'first',
                 value: '',
-                tableData: [{
-                    gateway: '怀集水机',
-                    name: '1#水池',
-                    company: 'm³',
-                    jan: 123,
-                    feb: 123,
-                    mar: 123,
-                    apr: 123,
-                    may: 123,
-                    jun: 123,
-                    jul: 123,
-                    aug: 123,
-                    sept: 123,
-                    oct: 123,
-                    nov: 123,
-                    dec: 123,
-                }],
-                tableDay: [{
-                    gateway: '怀集水机',
-                    name: '1#水池',
-                    company: 'm³',
-                    jan: 123,
-                    feb: 123,
-                    mar: 123,
-                    apr: 123,
-                    may: 123,
-                    jun: 123,
-                    jul: 123,
-                    aug: 123,
-                    sept: 123,
-                    oct: 123,
-                    nov: 123,
-                    dec: 123,
-                }],
                 chartData: {
                     columns: ['日期', '条数'],
                     rows: [
@@ -462,11 +490,14 @@
                     ]
                 },
                 formtext: {
-                    note: ''
+                    note: '',
+                    cid: '',
+                    vid: ''
                 },
                 formStatus: {
                     status: ''
                 },
+                formOrder:{order:''},
                 formUrl: [{
                     pid: '',
                     gid: '',
@@ -477,7 +508,7 @@
                 zoom: 13,
             }
         },
-        props:['setControl'],
+        props:['setControl', 'dataset', 'streamData','streamDataDay','vid','note'],
         methods:{
             handleClick(tab, event) {
                 console.log(tab, event);
@@ -517,12 +548,21 @@
                     this.formUrl.splice(index,1)
                 }
             },
+            noteAdd(){
+                Postnote(this.formtext).then(res => {
+                    if (res.code == 0){
+                        this.$message(res.msg)
+                    }else{
+                        this.$message(res.msg)
+                    }
+                })
+            },
             onadd(){
                 console.log(this.formUrl)
             },
             showViewControl(){
                 // console.log(this.control);
-                console.log(this.setControl);
+                // console.log(this.setControl);
                 this.control.forEach((result, index)=> {
                     this.setControl.forEach(cl => {
                         if (result.cid == cl.cid){
@@ -531,11 +571,13 @@
                         }
                     })
                 })
+                // console.log(this.control)
                 this.$forceUpdate()
             }
         },
         mounted() {
-            this.showViewControl()
+            this.showViewControl();
+            this.formtext.note = this.note;
         }
     }
 </script>
@@ -549,5 +591,22 @@
         right: 17px !important;
         top: 10px !important;
         bottom: 0px !important;
+    }
+    .mov-right{
+        height: auto !important;
+        overflow-y: unset !important;
+        border-radius: 0px !important;
+        #mon{
+            overflow-y: auto;
+            height: 73vh !important;
+        }
+    }
+    .stream_count{
+        .el-tabs__nav-scroll {
+            padding-left: 0px !important;
+        }
+    }
+    #mon .mov-view .mov-right{
+        overflow-y: unset !important;
     }
 </style>

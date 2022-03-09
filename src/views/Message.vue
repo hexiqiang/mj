@@ -100,6 +100,7 @@
         ,editMessage
         ,delMessage
         ,getMessage
+        ,getCsrf
     } from "../api/apis";
 
     export default {
@@ -114,7 +115,8 @@
                     title: '',
                     content: '',
                     status: true,
-                    mid: sessionStorage.getItem('mid')
+                    member: sessionStorage.getItem('username'),
+                    mid: sessionStorage.getItem('mid'),
                 },
                 currentPage: 1,
                 tableData: [],
@@ -123,7 +125,8 @@
                 offset: 0,
                 limit: 10,
                 title: '',
-                mid: sessionStorage.getItem('mid')
+                mid: sessionStorage.getItem('mid'),
+                csrf: ''
             }
         },
         methods: {
@@ -219,8 +222,9 @@
                 }
             }
         },
-        mounted() {
+      mounted() {
             this.getRecord(this.offset, this.limit)
+
         }
     }
 </script>

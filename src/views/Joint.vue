@@ -7,7 +7,7 @@
                         <el-input v-model="form.keyword" placeholder="请输入搜索内容"></el-input>
                     </el-col>
                     <el-col :span="6">
-                        <el-button icon="el-icon-search"></el-button>
+                        <el-button icon="el-icon-search" @click="search"></el-button>
                     </el-col>
                 </el-form>
             </el-col>
@@ -321,8 +321,15 @@
             clickRefresh(){
                 this.$router.go(0)
             },
-            getRecord(offset, limit){
-                getJoins({offset: offset, limit: limit}).then(res => {
+            getRecord(offset, limit, where){
+                let field = {
+                    offset: offset,
+                    limit: limit
+                };
+                if (where){
+                    Object.assign(field, where)
+                }
+                getJoins(field).then(res => {
                     if (res.code == 0){
                         this.totalCount = Number(res.data.totalCount);
                         this.tableData = res.data['data']
@@ -382,6 +389,9 @@
                 this.offset = offset;
                 this.limit = limit;
                 this.getRecord(this.offset, this.limit)
+            },
+            search(){
+                this.getRecord(this.offset,this.limit,this.form);
             },
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);

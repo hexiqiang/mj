@@ -11,13 +11,15 @@ import './assets/fonts/iconfont.css';
 import BaiDuMap from 'vue-baidu-map';
 import VCharts from 'v-charts'
 import VueCookies from 'vue-cookies'
+import Print from 'vue-print-nb'
+Vue.use(Print);
 Vue.config.productionTip = false;
 Vue.use(VueCookies);
 Vue.use(VueAxios, axios);
 Vue.use(VueWechatTitle);
 Vue.use(ElementUI);
 Vue.use(BaiDuMap,{
-  ak: ''
+  ak: '3v7vliEYoGKHs2EuhRro78ygcLCuj6Xp'
 });
 Vue.use(VCharts);
 new Vue({
