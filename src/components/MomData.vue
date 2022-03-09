@@ -202,7 +202,7 @@
                                                     sortable
                                                     label="单位">
                                             </el-table-column>
-                                            <el-table-column :label="streamDataDay.length > 0 ? streamDataDay[0].project_name : '' + '(号)'" sortable>
+                                            <el-table-column :label="streamDataDay && streamDataDay.length > 0 ? streamDataDay[0].project_name : '' + '(号)'" sortable>
                                                 <el-table-column
                                                         prop="1"
                                                         label="1">
