@@ -1,10 +1,9 @@
 <template>
-    <div class="called calldata">
+    <el-col class="called calldata  no-padding selected-r" style="padding: 0 !important;">
         <el-col :span="24">
             <el-col :span="24">
-
                 <el-form ref="form" v-model="form">
-                    <el-col :span="4">
+                    <div class="left-box">
                         <el-select v-model="form.value" filterable  placeholder="请选择项目">
                             <el-option
                                     v-for="item in options"
@@ -13,8 +12,8 @@
                                     :value="item.id">
                             </el-option>
                         </el-select>
-                    </el-col>
-                    <el-col :span="6">
+                    </div>
+                    <div class="left-box">
                         <div class="block">
                             <el-date-picker
                                     v-model="form.date"
@@ -26,12 +25,12 @@
                                     end-placeholder="结束日期">
                             </el-date-picker>
                         </div>
-                    </el-col>
+                    </div>
 
-                    <el-col :span="4">
+                    <div class="left-box">
                         <el-button icon="el-icon-search" @click="sreachRecord"></el-button>
                         <el-button class="refresh" type="danger" icon="el-icon-refresh" @click="clickRefresh">刷新</el-button>
-                    </el-col>
+                    </div>
                     <el-button class="daochu" style="float: right;" type="primary" @click="daochu = true">导出</el-button>
                 </el-form>
             </el-col>
@@ -43,9 +42,8 @@
                         @selection-change="handleSelectionChange"
                         :default-sort = "{order: 'descending'}"
                         tooltip-effect="dark">
-                    <el-table-column type="selection" width="55"></el-table-column>
                     <el-table-column prop="project_name" sortable label="工程"></el-table-column>
-                    <el-table-column prop="gateway_name" sortable label="报警设备"></el-table-column>
+                    <el-table-column prop="call_name" sortable label="报警设备"></el-table-column>
                     <el-table-column prop="call_message" sortable  label="报警信息"></el-table-column>
                     <el-table-column prop="call_type" sortable width="120" label="报警方式"></el-table-column>
                     <el-table-column prop="call_date" sortable width="180" label="报警时间"></el-table-column>
@@ -53,7 +51,7 @@
                     <el-table-column prop="call_note" sortable width="120" label="备注"></el-table-column>
                 </el-table>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="24"  class="page-box">
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -74,7 +72,7 @@
                 </el-col>
             </el-dialog>
         </el-col>
-    </div>
+    </el-col>
 </template>
 
 <script>
@@ -182,7 +180,7 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     @import "../assets/css/called";
     .calldata {
          .el-button{
@@ -202,4 +200,16 @@
             }
         }
     }
+    .called .el-col-24{
+        padding: 0 !important;
+    }
+    .left-box{
+        float: left;
+        margin-right: 10px;
+    }
+    .called .el-col-24{
+        padding: 0!important;
+    }
+
+
 </style>

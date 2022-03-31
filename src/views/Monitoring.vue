@@ -13,16 +13,32 @@
             </div>
             <span class="cl-show-box-1" @click="showNav(!showNavBox)"><i class="el-icon-arrow-right"></i></span>
         </div>
-        <div class="hidden-scroll"></div>
+        <div class="hidden-scroll" style="top: 12px !important;right: 38px !important;"></div>
         <el-col :span="24" class="mov-view">
             <el-col :span="24" class="mov-right">
                 <el-col :span="24" class="box-border" v-show="control[0].show">
                     <i class="el-icon-close cl-close" @click="delControl(control[0].vcid, 0)"></i>
                     <p>
-                        <i class="iconfont icon-sanjiao3"></i>数据展示组件 <el-button @click="formShowDialog = true;" type="primary" size="mini">添加</el-button>
+                        <i class="iconfont icon-sanjiao3"></i>数据展示组件
+                        <el-button @click="formShowDialog = true;formShow = {
+                    gid: '',
+                    cid: '',
+                    vid: '',
+                    sid: '',
+                    doing_type: 0,
+                    is_data_show: 0,
+                    map_position: '',
+                    do_name: ''
+                }"
+                                   type="primary"
+                                   size="mini">
+                            添加
+                        </el-button>
                     </p>
                     <el-col :span="24"  v-if="show_data.length > 0">
-                        <div class="project-box" v-for="i in show_data">
+                        <div class="project-box" v-for="(i, idx) in show_data">
+                            <i class="el-icon-close f-r" @click="delAssembly(i.id, 'show', idx)"></i>
+                            <i class="el-icon-edit-outline f-e-r" @click="showAssembly(i.id, 'show', idx)"></i>
                             <el-col :span="4">
                                 <i class="iconfont icon-yewei"></i>
                             </el-col>
@@ -45,15 +61,26 @@
                     <i class="el-icon-close cl-close" @click="delControl(control[1].vcid, 1)"></i>
                     <p>
                         <i class="iconfont icon-sanjiao3"></i>数据监控组件
-                        <el-button @click="formSetDialog = true;" type="primary" size="mini">添加</el-button>
+                        <el-button @click="formSetDialog = true;formShow = {
+                    gid: '',
+                    cid: '',
+                    vid: '',
+                    sid: '',
+                    doing_type: 0,
+                    is_data_show: 0,
+                    map_position: '',
+                    do_name: ''
+                }" type="primary" size="mini">添加</el-button>
                     </p>
                     <el-col :span="24" v-if="doing_type.length > 0">
-                        <template v-for="d in doing_type">
+                        <template v-for="(d, idx) in doing_type">
                             <div class="project-box data-mon" v-if="d.doing_type == 1">
-                                <el-col :span="5">
+                                <i class="el-icon-close f-r"  @click="delAssembly(d.id, 'do', idx)"></i>
+                                <i class="el-icon-edit-outline f-e-r" @click="showAssembly(d.id, 'do', idx)"></i>
+                                <el-col :span="4">
                                     <i class="iconfont icon-yewei"></i>
                                 </el-col>
-                                <el-col :span="19">
+                                <el-col :span="20">
                                     <el-col :span="12" class="left-24">
                                         <el-col :span="24">{{d.stream_name}}</el-col>
                                         <el-col :span="24">当前值：{{d.record + '' + d.comp}}</el-col>
@@ -70,8 +97,9 @@
                                             </el-form>
                                         </el-col>
                                     </el-col>
-                                    <el-col :span="12">
-                                        <el-col :span="24">{{d.add_date}}</el-col>
+                                    <el-col :span="12"  class="date-show">
+                                        <el-col :span="24">{{d.add_date.split(' ')[0]}}</el-col>
+                                        <el-col :span="24">{{d.add_date.split(' ')[1]}}</el-col>
                                         <el-col :span="24">
                                             <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
                                         </el-col>
@@ -79,10 +107,12 @@
                                 </el-col>
                             </div>
                             <div class="project-box data-mon"  v-if="d.doing_type == 2">
-                                <el-col :span="5">
+                                <i class="el-icon-close f-r"  @click="delAssembly(d.id, 'do', idx)"></i>
+                                <i class="el-icon-edit-outline f-e-r" @click="showAssembly(d.id, 'do', idx)"></i>
+                                <el-col :span="4">
                                     <i class="iconfont icon-yewei"></i>
                                 </el-col>
-                                <el-col :span="19">
+                                <el-col :span="20">
                                     <el-col :span="12" class="left-24">
                                         <el-col :span="24">{{d.stream_name}}</el-col>
                                         <el-col :span="24">当前值：{{d.record + '' + d.comp}}</el-col>
@@ -93,8 +123,9 @@
                                             </el-form>
                                         </el-col>
                                     </el-col>
-                                    <el-col :span="12">
-                                        <el-col :span="24">{{d.add_date}}</el-col>
+                                    <el-col :span="12"  class="date-show">
+                                        <el-col :span="24">{{d.add_date.split(' ')[0]}}</el-col>
+                                        <el-col :span="24">{{d.add_date.split(' ')[1]}}</el-col>
                                         <el-col :span="24">
                                             <el-button size="mini" type="primary" @click="showView = true">趋势图</el-button>
                                         </el-col>
@@ -288,23 +319,10 @@
                     <p><i class="iconfont icon-sanjiao3"></i>地图设备定位显示组件</p>
                     <el-col :span="24">
                         <div class="mapbox">
-
-                             
-                            <baidu-map :center="center" :zoom="zoom" @ready="handler" style="height:500px"
-                                       @click="getClickInfo"></baidu-map>
-
-                               
+                            <baidu-map :center="center" :zoom="zoom" @ready="handler" :enableScrollWheelZoom="true" style="height:500px" @click="getClickInfo"></baidu-map>
                             <bm-navigation anchor="BMAP_ANCHOR_TOP_RIGHT"></bm-navigation>
-
-                               
-                            <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']"
-                                         anchor="BMAP_ANCHOR_TOP_LEFT"></bm-map-type>
-
-                               
-                            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true"
-                                            :autoLocation="true"></bm-geolocation>
-
-                               
+                            <bm-map-type :map-types="['BMAP_NORMAL_MAP', 'BMAP_HYBRID_MAP']" anchor="BMAP_ANCHOR_TOP_LEFT"></bm-map-type>
+                            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true"></bm-geolocation>
                             <bm-city-list anchor="BMAP_ANCHOR_TOP_LEFT"></bm-city-list>
                         </div>
                     </el-col>
@@ -321,9 +339,26 @@
                 </el-col>
                 <el-col :span="24" class="box-border" v-show="control[5].show">
                     <i class="el-icon-close cl-close" @click="delControl(control[5].vcid, 5)"></i>
-                    <p><i class="iconfont icon-sanjiao3"></i>监控视频组件</p>
+                    <p>
+                        <i class="iconfont icon-sanjiao3"></i>监控视频组件
+                        <el-button @click="formSetVideo = true; formVideo={
+                    gid: '',
+                    cid: '',
+                    vid: '',
+                    sid: '',
+                    url: '',
+                    do_name: ''
+                }" type="primary" size="mini">添加</el-button>
+                    </p>
                     <el-col :span="24" class="video-box">
-                        <img src="../assets/images/video.png" alt="">
+                        <el-col :span="8" v-for="(item, idx) in video">
+                            <i class="el-icon-close f-r" @click="delFormVideo(item.id, idx)"></i>
+                            <i class="el-icon-edit-outline f-e-r" @click="showFormVideo(item.id, idx)"></i>
+                            <video controls :src="item.url"  poster="/src/assets/images/video.png">
+                                <source :src="item.url">
+                                <source :src="item.url" type="application/x-mpegURL">
+                            </video>
+                        </el-col>
                     </el-col>
                 </el-col>
                 <el-col :span="24" class="box-border" v-show="control[6].show">
@@ -342,17 +377,15 @@
                                 <template v-for="(item, index) in formUrl">
                                     <el-col :span="5">
                                         <el-form-item label="">
-                                            <el-select v-model="formUrl[index].pid" placeholder="活动区域">
-                                                <el-option label="区域一" value="shanghai"></el-option>
-                                                <el-option label="区域二" value="beijing"></el-option>
+                                            <el-select v-model="formUrl[index].pid" @change="changeProject" placeholder="选择工程">
+                                                <el-option v-for="(item, key) in pro" :label="item.project_name" :value="item.id"></el-option>
                                             </el-select>
                                         </el-form-item>
                                     </el-col>
                                     <el-col :span="5">
                                         <el-form-item label="">
                                             <el-select v-model="formUrl[index].gid" placeholder="网关">
-                                                <el-option label="区域一" value="shanghai"></el-option>
-                                                <el-option label="区域二" value="beijing"></el-option>
+                                                <el-option  v-for="(item, key) in prostream" :label="item.gateway_name" :value="item.id"></el-option>
                                             </el-select>
                                         </el-form-item>
                                     </el-col>
@@ -368,7 +401,6 @@
                                     </el-col>
                                     <el-col :span="3"><el-button class="form-do" @click="formDo('add')">+</el-button><el-button  class="form-do" @click="formDo('del', index)">-</el-button></el-col>
                                 </template>
-                                <el-button type="primary" @click="onadd" style="margin-top: 15px;">提交</el-button>
                             </el-col>
                         </el-form>
                     </el-col>
@@ -389,6 +421,9 @@
                 <el-input type="hidden" v-model="formShow.cid = 1" class="hide"></el-input>
                 <el-input type="hidden" v-model="formShow.is_data_show = 1" class="hide"></el-input>
                 <el-input type="hidden" v-model="formShow.vid = vid" class="hide"></el-input>
+                <el-form-item label="组件名称" :required="true" class="fa">
+                    <el-input v-model="formShow.do_name" autocomplete="off" placeholder=""></el-input>
+                </el-form-item>
                 <el-form-item label="选择网关">
                     <el-select @change="getGatewayStreamData" v-model="formShow.gid" placeholder="请选择网关">
                         <el-option v-for="item in gateway" :label="item.gateway_name" :value="item.id"></el-option>
@@ -410,6 +445,9 @@
             <el-form :label-position="'left'"  label-width="100px" :inline="true" :model="formShow" class="demo-form-inline">
                 <el-input type="hidden" v-model="formShow.cid = 2" class="hide"></el-input>
                 <el-input type="hidden" v-model="formShow.vid = vid" class="hide"></el-input>
+                <el-form-item label="组件名称" :required="true" class="fa">
+                    <el-input v-model="formShow.do_name" autocomplete="off" placeholder=""></el-input>
+                </el-form-item>
                 <el-form-item label="选择网关">
                     <el-select @change="getGatewayStreamData" v-model="formShow.gid" placeholder="请选择网关">
                         <el-option v-for="item in gateway" :label="item.gateway_name" :value="item.id"></el-option>
@@ -430,6 +468,32 @@
                 <el-button type="primary" @click="addFormShow(2)">保存</el-button>
             </div>
         </el-dialog>
+        <el-dialog class="showStream" title="添加监控" :visible.sync="formSetVideo" width="400px">
+            <el-form :label-position="'left'"  label-width="100px" :inline="true" :model="formShow" class="demo-form-inline">
+                <el-input type="hidden" v-model="formVideo.cid = 2" class="hide"></el-input>
+                <el-input type="hidden" v-model="formVideo.vid = vid" class="hide"></el-input>
+                <el-form-item label="组件名称" :required="true" class="fa">
+                    <el-input v-model="formVideo.do_name" autocomplete="off" placeholder=""></el-input>
+                </el-form-item>
+                <el-form-item label="选择网关">
+                    <el-select @change="getGatewayStreamData" v-model="formVideo.gid" placeholder="请选择网关">
+                        <el-option v-for="item in gateway" :label="item.gateway_name" :value="item.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="选择数据流">
+                    <el-select v-model="formVideo.sid" placeholder="选择数据流">
+                        <el-option v-for="s in stream" :label="s.stream_name" :value="s.id"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item  label="设置监控地址">
+                    <el-input v-model="formVideo.url" autocomplete="off" placeholder=""></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="formSetVideo = false">取 消</el-button>
+                <el-button type="primary" @click="addFormVideo">保存</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -443,6 +507,13 @@
         ,getGatewayStream
         ,PostData
         ,Getsetting
+        , getProjectList
+        ,getProjectGateway
+        ,delAssembly
+        ,editData
+        ,PostVideoData
+        ,EditVideoData
+        ,DelVideoData
     } from "../api/apis";
 
     export default {
@@ -462,71 +533,13 @@
                 activeName: 'first',
                 showNavBox: true,
                 controls: [],
-                options: [
-                    {
-                        value: '怀集水利工程',
-                        label: '怀集水利工程'
-                    }, {
-                        value: '温氏集团',
-                        label: '温氏集团'
-                    }
-                ],
+                options: [],
                 value: '',
-                tableData: [{
-                    gateway: '怀集水机',
-                    name: '1#水池',
-                    company: 'm³',
-                    jan: 123,
-                    feb: 123,
-                    mar: 123,
-                    apr: 123,
-                    may: 123,
-                    jun: 123,
-                    jul: 123,
-                    aug: 123,
-                    sept: 123,
-                    oct: 123,
-                    nov: 123,
-                    dec: 123,
-                }],
-                tableDay: [{
-                    gateway: '怀集水机',
-                    name: '1#水池',
-                    company: 'm³',
-                    jan: 123,
-                    feb: 123,
-                    mar: 123,
-                    apr: 123,
-                    may: 123,
-                    jun: 123,
-                    jul: 123,
-                    aug: 123,
-                    sept: 123,
-                    oct: 123,
-                    nov: 123,
-                    dec: 123,
-                }],
+                tableData: [],
+                tableDay: [],
                 chartData: {
                     columns: ['日期', '条数'],
-                    rows: [
-                        {'日期': '2022-02-01', '条数': 123},
-                        {'日期': '2022-02-02', '条数': 152},
-                        {'日期': '2022-02-03', '条数': 167},
-                        {'日期': '2022-02-04', '条数': 254},
-                        {'日期': '2022-02-05', '条数': 289},
-                        {'日期': '2022-02-06', '条数': 167},
-                        {'日期': '2022-02-07', '条数': 95},
-                        {'日期': '2022-02-08', '条数': 267},
-                        {'日期': '2022-02-09', '条数': 54},
-                        {'日期': '2022-02-10', '条数': 23},
-                        {'日期': '2022-02-11', '条数': 78},
-                        {'日期': '2022-02-12', '条数': 12},
-                        {'日期': '2022-02-13', '条数': 99},
-                        {'日期': '2022-02-14', '条数': 107},
-                        {'日期': '2022-02-15', '条数': 107},
-                        {'日期': '2022-02-16', '条数': 107},
-                        {'日期': '2022-02-17', '条数': 107}
-                    ]
+                    rows: []
                 },
                 formtext: {
                     note: ''
@@ -556,12 +569,25 @@
                     doing_type: 0,
                     is_data_show: 0,
                     map_position: '',
+                    do_name: ''
                 },
                 formShowDialog: false,
                 formSetDialog: false,
                 show_data:[],
                 doing_type:[],
+                video:[],
                 map_position:[],
+                pro: [],
+                prostream:[],
+                formSetVideo: false,
+                formVideo:{
+                    gid: '',
+                    cid: '',
+                    vid: '',
+                    sid: '',
+                    url: '',
+                    do_name: ''
+                }
             }
         },
         methods: {
@@ -656,18 +682,145 @@
                 } else if(num == 2){
                     this.formShow.is_data_show = '';
                 }
-                PostData(this.formShow).then(res => {
+                if (this.formShow.id){
+                    editData(this.formShow).then(res => {
+                        if (res.code == 0){
+                            this.formShowDialog = false;
+                            this.formSetDialog = false;
+                            this.show_data = res.data['show_data'];
+                            this.doing_type = res.data['doing_type'];
+                            this.map_position = res.data['map_position'];
+                        }
+                    })
+                } else{
+                    PostData(this.formShow).then(res => {
+                        if (res.code == 0){
+                            this.formShowDialog = false;
+                            this.formSetDialog = false;
+                            this.show_data = res.data['show_data'];
+                            this.doing_type = res.data['doing_type'];
+                            this.map_position = res.data['map_position'];
+                        }
+                    })
+                }
+
+            },
+            changeProject(val){
+                getProjectGateway({pid: val}).then(res => {
                     if (res.code == 0){
-                        this.formShowDialog = false;
-                        this.formSetDialog = false;
-                        this.show_data = res.data['show_data'];
-                        this.doing_type = res.data['doing_type'];
-                        this.map_position = res.data['map_position'];
+                        this.prostream = res.data
                     }
+                })
+            },
+            getProject(){
+                getProjectList().then(res => {
+                    if (res.code == 0){
+                        this.pro = res.data
+                    }
+                })
+            },
+            //删除组件下的子组件
+            delAssembly(id, type, index){
+                console.log(id)
+                this.$confirm('此操作将永久删除该组件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    delAssembly({id: id}).then(res => {
+                        console.log(res);
+                        if (res.code == 0){
+                            if (type == 'show'){
+                                this.show_data.splice(index, 1)
+                            }else if(type == 'do') {
+                                this.doing_type.splice(index, 1)
+                            }
+                            this.$message({
+                                type: 'success',
+                                message: res.msg
+                            });
+                            this.$router.push({ name: 'monitoring', params: { vid: this.vid }})
+                        } else{
+                            this.$message({
+                                type: 'warning',
+                                message: res.msg
+                            });
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                })
+            },
+            showAssembly(id, type, index){
+                this.formShowDialog = true
+                if (type == 'show'){
+                    this.formShow.doing_type = '';
+                    this.formShow = this.show_data[index]
+                } else if(type == 'do'){
+                    this.formShow.is_data_show = '';
+                    this.formShow = this.doing_type[index]
+                }
+                console.log(this.formShow)
+            },
+            addFormVideo(){
+                let id = this.formVideo.id;
+                if (id){
+                    EditVideoData(this.formVideo).then(res => {
+                        if (res.code == 0){
+                            this.formSetVideo = false;
+                            this.video = res.data
+                        }
+                    })
+                } else{
+                    PostVideoData(this.formVideo).then(res => {
+                        if (res.code == 0){
+                            this.formSetVideo = false;
+                            this.video = res.data
+                        }
+                    })
+                }
+
+            },
+            showFormVideo(id, index){
+                this.formSetVideo = true;
+                this.formVideo = this.video[index];
+            },
+            delFormVideo(id,index){
+                this.$confirm('此操作将永久删除该组件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    DelVideoData({id:id}).then(res => {
+                        if (res.code == 0){
+                            this.video.splice(index, 1)
+                            this.$message({
+                                type: 'success',
+                                message: res.msg
+                            });
+                            this.$router.push({ name: 'monitoring', params: { vid: this.vid }})
+                        } else{
+                            this.$message({
+                                type: 'warning',
+                                message: res.msg
+                            });
+                        }
+                    })
+
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
                 })
             }
         },
         mounted() {
+            this.getProject();
             getViewControl().then(res => {
                 if (res.code == 0) {
                     this.controls = res.data
@@ -699,19 +852,20 @@
                 if (res.code ==0 ){
                     this.gateway = res.data
                 }
-            })
+            });
             Getsetting({vid: this.vid}).then(res => {
                 if (res.code == 0){
                     this.show_data = res.data['show_data'];
                     this.doing_type = res.data['doing_type'];
                     this.map_position = res.data['map_position'];
+                    this.video = res.data['video'];
                 }
             })
         }
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" >
     @import "../assets/css/monitoring";
     @import "../assets/css/mon";
     #mon .mov-view .mov-right {
@@ -731,5 +885,30 @@
             width: 60px;
             margin-right: 10px;
         }
+    }
+    .project-box{
+        position: relative;
+    }
+    .f-r{
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        /*border: 1px solid #ccc;*/
+        /*-webkit-border-radius: 100%;*/
+        /*-moz-border-radius: 100%;*/
+        /*border-radius: 100%;*/
+    }
+    .f-e-r{
+        position: absolute;
+        top: 10px;
+        right: 40px;
+    }
+    .video-box .el-col-8{
+        position: relative;
+    }
+    .el-col-8 video{
+        width: 100%;
+        box-sizing: border-box;
+        padding: 20px;
     }
 </style>

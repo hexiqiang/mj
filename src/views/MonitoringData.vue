@@ -1,23 +1,23 @@
 <template>
     <div class="joint mondata">
-        <el-col :span="24" class="mondata-top">
-            <el-form ref="form" v-model="searchForm">
-                <template>
-                    <el-select v-model="searchForm.pid" filterable @change="searchProject"  placeholder="请选择工程" >
-                        <el-option
-                                v-for="item in projects"
-                                :key="item.project_name"
-                                :label="item.project_name"
-                                :value="item.id">
-                        </el-option>
-                    </el-select>
-                </template>
-            </el-form>
-            <el-button type="primary" @click="showDl = true;title='添加视图名称'">添加</el-button>
-            <el-button type="danger">删除</el-button>
-            <el-button type="primary" @click="clickRefresh">刷新</el-button>
-        </el-col>
-        <el-col :span="24">
+        <el-col :span="24" class="content-box">
+            <el-col :span="24" class="mondata-top">
+                <el-form ref="form" v-model="searchForm">
+                    <template>
+                        <el-select v-model="searchForm.pid" filterable @change="searchProject"  placeholder="请选择工程" >
+                            <el-option
+                                    v-for="item in projects"
+                                    :key="item.project_name"
+                                    :label="item.project_name"
+                                    :value="item.id">
+                            </el-option>
+                        </el-select>
+                    </template>
+                </el-form>
+                <el-button type="primary" @click="handleAdd">添加</el-button>
+                <el-button type="danger">删除</el-button>
+                <el-button type="primary" @click="clickRefresh">刷新</el-button>
+            </el-col>
             <el-col :span="24">
                 <el-table
                         class="join_table"
@@ -55,7 +55,7 @@
                                 <el-button
                                         size="mini"
                                         type="primary"
-                                        @click="handleEdit(scope.$index, scope.row, item.id);title='编辑视图名称'">编辑</el-button>
+                                        @click="handleEdit(scope.$index, scope.row, item);title='编辑视图名称'">编辑</el-button>
                                 <el-button
                                         size="mini"
                                         type="danger"
@@ -69,7 +69,7 @@
                     </el-table-column>
                 </el-table>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="24"  class="page-box">
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -180,8 +180,23 @@
             handleSelectionChange(val) {
                 this.multipleSelection = val;
             },
-            handleEdit(index, row,id) {
-                console.log(index, row,id);
+            // form:{
+            //     pid: '',
+            //     view_title: '',
+            //     note: '',
+            //     editer: sessionStorage.getItem('username')
+            // },
+            handleEdit(index, row, views) {
+                this.form = {
+                    pid: row.pid,
+                    view_title: views.view_title,
+                    note:  views.note,
+                    vid: row.id,
+                    id:  views.id,
+                    editer: sessionStorage.getItem('username')
+                };
+                this.showDl = true;
+                console.log(index, row, views);
             },
             handleDelete(index, row, vid) {
                 console.log(index, row, vid);
@@ -190,13 +205,22 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(() => {
+                    delView({id: vid}).then(res => {
+                        if (res.code == 0){
+                            this.clickRefresh();
+                            this.tableData[index]['views'].splice(0,1)
+                            this.$message({
+                                type: 'success',
+                                message:  res.msg
+                            });
 
-                    this.$message({
-                        type: 'success',
-                        message: '删除成功!'
-                    });
-                    this.tableData[index]['views'].splice(0,1)
-                    this.tableData[index]['views']
+                        } else{
+                            this.$message({
+                                type: 'warning',
+                                message: res.msg
+                            });
+                        }
+                    })
                 }).catch(() => {
                     this.$message({
                         type: 'info',
@@ -205,8 +229,15 @@
                 });
 
             },
-            handleAdd(index, row) {
-                console.log(index, row);
+            handleAdd() {
+                this.showDl = true;
+                this.title='添加视图名称';
+                this.form = {
+                    pid: '',
+                    view_title: '',
+                    note: '',
+                    editer: sessionStorage.getItem('username')
+                };
             },
             handleDetail(index,row){
 
@@ -234,14 +265,28 @@
                 let pid = this.form.pid;
                 let view_title = this.form.view_title;
                 if (pid && view_title){
-                    addView(this.form).then(res => {
-                        if (res.code == 0){
-                            this.showDl = false;
-                            this.$message({message: res.msg, type: 'success'})
-                        } else{
-                            this.$message({message: res.msg, type: 'warning'})
-                        }
-                    })
+                    if (this.form.vid){
+                        console.log(this.form)
+                        editView(this.form).then(res => {
+                            if (res.code == 0){
+                                this.showDl = false;
+                                this.$message({message: res.msg, type: 'success'})
+                                window.history.href=window.history.href
+                            } else{
+                                this.$message({message: res.msg, type: 'warning'})
+                            }
+                        })
+                    } else{
+                        addView(this.form).then(res => {
+                            if (res.code == 0){
+                                this.showDl = false;
+                                this.$message({message: res.msg, type: 'success'})
+                                window.history.href=window.history.href
+                            } else{
+                                this.$message({message: res.msg, type: 'warning'})
+                            }
+                        })
+                    }
                 } else{
                     this.$message('请填写完整星号项')
                 }
@@ -266,7 +311,7 @@
     @import "../assets/css/joint";
     .mondata{
         .el-col-24{
-            margin: 0 !important;
+            margin: 10px 0 !important;
         }
         .mondata-top{
             form{
@@ -286,5 +331,11 @@
                 overflow: hidden;
             }
         }
+        .content-box{
+            padding: 0 20px !important;
+        }
+    }
+    .joint .el-form .el-input .el-input__inner{
+        border-radius: 4px;
     }
 </style>

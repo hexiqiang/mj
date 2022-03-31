@@ -40,11 +40,11 @@
   }
   .switchStyle .el-switch__label--left {
     z-index: 9;
-    left: 20px;
+    left: 7px;
   }
   .switchStyle .el-switch__label--right {
     z-index: 9;
-    left: -4px;
+    left: -17px;
   }
   .switchStyle .el-switch__label.is-active {
     display: block;
@@ -135,6 +135,18 @@
     }
     .fa{
       text-indent: 1.5em;
+    }
+  }
+}
+
+.selected-r {
+  .el-form {
+    .el-input {
+      float: left;
+      .el-input__inner {
+        border-top-right-radius: 4px !important;
+        border-bottom-right-radius: 4px !important;
+      }
     }
   }
 }

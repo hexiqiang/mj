@@ -128,9 +128,11 @@ export const login = data => post('api/login/login', data);
 export const checklogin = data => post('api/login/checklogin',data);
 
 export const getProjectViewGateway = data => get('api/viewmanage/getprojectviewgateway',data);
-
+//提交自定义链接数据
+export const postUrl = data => post('api/viewmanage/posturl',data);
 //提交视图设置的相关项
 export  const PostData = data => post('api/viewmanage/postdata',data);
+export  const editData = data => post('api/viewmanage/editdata',data);
 export  const Getsetting = data => get('api/viewmanage/getsetting',data);
 //提交视图上的文本数据
 export const Postnote = data => post('api/viewmanage/postnote',data);
@@ -141,6 +143,30 @@ export const  Getstreamrecorddatas = data => get('api/datas/getstreamrecorddatas
 //查询报警历史数据
 export const Getcalldata = data => get('api/datas/getcalldata',data);
 export const Getcallrecords = data  => get('api/datas/getcallrecord',data);
+//发送命令
+export const sendOrder = data => post('api/api/send',data);
+//获取视图管理里面对应的数据图表
+export const getBoxData = data => get('api/datas/getboxdata',data);
+
+
+//启动监听脚本
+export const Monitor = data => get('mq/subscribe/index',data);
+export const MonitorReadRedis = data => get('mq/subscribe/readredis',data);
+
+//删除子组件
+export const delAssembly = data => post('api/viewmanage/delassembly', data);
+// 添加监控组件
+export const PostVideoData = data => post('api/viewmanagejoinvideo/add',data);
+export const EditVideoData = data => post('api/viewmanagejoinvideo/edit',data);
+export const DelVideoData = data => post('api/viewmanagejoinvideo/del',data);
+
+export const Addmap = data => post('api/viewmanagejoinmap/add',data);
+export const Updatemap = data => post('api/viewmanagejoinmap/edit',data);
+
+
+//发送开发命令
+export const gatewayChangeStatus = data => post('api/windex/changestatus',data);
+
 export default {
     getNavs
     , getCsrf
@@ -225,4 +251,17 @@ export default {
     ,Getstreamrecorddatas
     ,Getcalldata
     ,Getcallrecords
+    ,postUrl
+    ,getBoxData
+    ,sendOrder
+    ,Monitor
+    ,MonitorReadRedis
+    ,delAssembly
+    ,editData
+    ,PostVideoData
+    ,EditVideoData
+    ,DelVideoData
+    ,Addmap
+    ,Updatemap
+    ,gatewayChangeStatus
 }

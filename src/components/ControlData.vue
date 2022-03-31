@@ -1,5 +1,5 @@
 <template>
-    <div class="called calldata controldata">
+    <div class="called calldata controldata  no-padding selected-r">
         <el-col :span="24">
             <el-col :span="24">
                 <el-col :span="4">
@@ -16,7 +16,6 @@
                         @selection-change="handleSelectionChange"
                         :default-sort = "{order: 'descending'}"
                         tooltip-effect="dark">
-                    <el-table-column type="selection" width="55"></el-table-column>
                     <el-table-column prop="project_name" sortable label="工程"></el-table-column>
                     <el-table-column prop="gateway_name" sortable label="设备名称"></el-table-column>
                     <el-table-column prop="post_orders" sortable  label="发送命令"></el-table-column>
@@ -26,7 +25,7 @@
                     <el-table-column prop="note" sortable width="120" label="备注"></el-table-column>
                 </el-table>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="24"  class="page-box">
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"

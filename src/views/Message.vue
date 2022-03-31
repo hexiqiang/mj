@@ -1,17 +1,18 @@
 <template>
     <div class="called message">
-        <el-col :span="24">
-            <el-col :span="6">
-                <el-form ref="form" v-model="searchFiled">
-                    <el-col :span="18">
-                        <el-input v-model="searchFiled.keyword" placeholder="请输入搜索内容" @blur="search"></el-input>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-button icon="el-icon-search" @click="search"></el-button>
-                    </el-col>
-                </el-form>
-            </el-col>
-            <el-col :span="18">
+        <el-col :span="24"  class="content-box">
+            <el-col :span="24" class="content-box" style="margin-top: 0px;">
+                <div class="form-box">
+                    <el-form ref="form" v-model="searchFiled">
+                        <el-col :span="18">
+                            <el-input v-model="searchFiled.keyword" placeholder="请输入搜索内容" @blur="search"></el-input>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-button icon="el-icon-search" @click="search"></el-button>
+                        </el-col>
+                    </el-form>
+                </div>
+
                 <el-button type="primary" @click="dialogFormVisible = true;title='发布消息'">发布</el-button>
                 <el-button type="danger">删除</el-button>
                 <el-button type="primary" @click="clickRefresh">刷新</el-button>
@@ -54,15 +55,17 @@
                     </el-table-column>
                 </el-table>
             </el-col>
-            <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="currentPage"
-                    :page-sizes="[10, 20, 50, 100]"
-                    :page-size="10"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    :total="totalCount">
-            </el-pagination>
+            <el-col :span="24"  class="page-box">
+                <el-pagination
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="currentPage"
+                        :page-sizes="[10, 20, 50, 100]"
+                        :page-size="10"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="totalCount">
+                </el-pagination>
+            </el-col>
         </el-col>
         <el-dialog class="baojing" :title="title" width="30%" :label-position="'top'" :visible.sync="dialogFormVisible">
             <el-form :model="formData" ref="formData">
@@ -229,7 +232,7 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     @import "../assets/css/called";
     .message {
         .el-dialog__body{
@@ -244,5 +247,11 @@
         .el-form-item__content{
             width: 100% !important;
         }
+    }
+    .form-box{
+        overflow: hidden;
+        float: left;
+        width: 240px;
+        margin-right: 5px;
     }
 </style>

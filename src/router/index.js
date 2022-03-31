@@ -20,6 +20,7 @@ import MonitoringView from '../views/MonitoringView.vue' //监控视图页
 import Monitoring from '../views/Monitoring.vue' //监控视图管理页
 import MonitoringData from '../views/MonitoringData.vue' //监控视图列表页
 import Historys from '../views/Historys.vue' //监控视图列表页
+import Gateway from '../views/Gateway.vue' //所有MQ网关列表页
 
 Vue.use(VueRouter);
 const originalPush = VueRouter.prototype.push;
@@ -150,6 +151,13 @@ const routes = [
                 component: MonitoringData,
                 meta: {
                     title: '监控视图管理'
+                }
+            },{
+                path: '/gateway',
+                name: 'gateway',
+                component: Gateway,
+                meta: {
+                    title: 'MQ网关'
                 }
             },
         ]

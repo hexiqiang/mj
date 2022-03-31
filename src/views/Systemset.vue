@@ -1,37 +1,53 @@
 <template>
     <div class="systemset">
-        <el-col :span="24">
+        <el-col :span="24"  class="content-box">
             <p><strong>系统设置</strong></p>
-            <el-form id="form1" ref="form" :model="form" label-width="80px">
-                <el-form-item label="系统名称">
-                    <el-input v-model="form.title"></el-input>
-                </el-form-item>
-                <el-form-item class="logo" label="logo">
-                    <input id="logo" type="file" name="logo" style="display: none">
-                    <img v-if="form.logo" :src="form.logo" @click="saveFile('logo')" class="avatar">
-                    <i v-else @click="saveFile('logo')" class="el-icon-plus avatar-uploader-icon"></i>
-                </el-form-item>
-                <el-form-item class="logo" label="登录背景">
-                    <input id="bg" type="file" name="bg"  style="display: none">
-                    <img v-if="form.background" :src="form.background" @click="saveFile('bg')" class="avatar">
-                    <i v-else @click="saveFile('bg')" class="el-icon-plus avatar-uploader-icon"></i>
-                </el-form-item>
-                <el-form-item  label="顶部颜色">
-                    <el-color-picker v-model="form.topcolor" @change="colorChange('top',$event)"></el-color-picker>
-                </el-form-item>
-                <el-form-item  label="左侧颜色">
-                    <el-color-picker v-model="form.leftcolor" @change="colorChange('left',$event)"></el-color-picker>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="onSubmit">保存</el-button>
-                </el-form-item>
-            </el-form>
+            <template v-if="member == 'admin'">
+                <el-form id="form1" ref="form" :model="form" label-width="80px">
+                    <el-form-item label="系统名称">
+                        <el-input v-model="form.title"></el-input>
+                    </el-form-item>
+                    <el-form-item label="mqIP">
+                        <el-input v-model="form.mqhost"></el-input>
+                    </el-form-item>
+                    <el-form-item label="mq端口">
+                        <el-input v-model="form.mqport"></el-input>
+                    </el-form-item>
+                    <el-form-item class="logo" label="logo">
+                        <input id="logo" type="file" name="logo" style="display: none">
+                        <img v-if="form.logo" :src="form.logo" @click="saveFile('logo')" class="avatar">
+                        <i v-else @click="saveFile('logo')" class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-form-item>
+                    <el-form-item class="logo" label="登录背景">
+                        <input id="bg" type="file" name="bg"  style="display: none">
+                        <img v-if="form.background" :src="form.background" @click="saveFile('bg')" class="avatar">
+                        <i v-else @click="saveFile('bg')" class="el-icon-plus avatar-uploader-icon"></i>
+                    </el-form-item>
+                    <el-form-item  label="顶部颜色">
+                        <el-color-picker v-model="form.topcolor" @change="colorChange('top',$event)"></el-color-picker>
+                    </el-form-item>
+                    <el-form-item  label="左侧颜色">
+                        <el-color-picker v-model="form.leftcolor" @change="colorChange('left',$event)"></el-color-picker>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="onSubmit">保存</el-button>
+                        <el-button type="primary" @click="onMonitor">启动消息监听</el-button>
+                    </el-form-item>
+                </el-form>
+            </template>
         </el-col>
     </div>
 </template>
 
 <script>
-    import {addSetting, upFile, settingsys,editSetting} from "../api/apis";
+    import {
+        addSetting
+        , upFile
+        , settingsys
+        ,editSetting
+        ,Monitor
+        ,MonitorReadRedis
+    } from "../api/apis";
     import qs from 'qs'
     export default {
         name: "Systemset",
@@ -39,6 +55,8 @@
             return{
                 form: {
                     title: '',
+                    mqhost: '',
+                    mqport: '',
                     logo: '',
                     background: '',
                     topcolor: '#242F42',
@@ -48,6 +66,7 @@
                 background: '',
                 color1: '#242F42',
                 color2: '#324157',
+                member: sessionStorage.getItem('username')
             }
         },
         methods:{
@@ -117,6 +136,10 @@
                         window.document.getElementsByClassName('el-menu')[i].style.background = val
                     }
                 }
+            },
+            onMonitor(){
+                fetch("http://yii.cc/mq/subscribe/index");
+                fetch("http://yii.cc/mq/subscribe/readredis");
             }
         },
         mounted() {
@@ -136,7 +159,7 @@
                     }
 
                 }
-            })
+            });
         }
     }
 </script>

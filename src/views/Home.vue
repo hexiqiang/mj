@@ -122,17 +122,29 @@
                         this.chartData3.rows = res.data
                     }
                 })
+            },
+            //获取报警的信息提示用户有报警信息
+            getCalledData(){
+                this.$notify({
+                    title: '报警',
+                    message: '这是一条警告的提示消息',
+                    type: 'warning',
+                    duration: 10000
+                });
             }
         },
         created(){
             this.getIndex();
             let mtoken = sessionStorage.getItem('mtoken');
         },
+
+
         mounted() {
             this.getTotalCall(6);
             this.getTotalJoin(6);
             this.getTotalControl(6);
             this.getTotalMessage(6);
+            this.getCalledData();
         }
     }
 </script>
@@ -154,11 +166,13 @@
                 float: left;
                 width: 49.5%;
                 margin-top: 15px;
+                padding: 20px;
+                box-sizing: border-box;
 
                 p {
                     position: absolute;
                     right: 10px;
-                    top: 10px;
+                    top: 15px;
                     z-index: 100;
                     margin: 4px 10px;
                     float: right;

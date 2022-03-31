@@ -1,6 +1,7 @@
 <template>
     <div class="curve">
-        <el-col :span="24">
+        <el-col :span="24"  class="content-box">
+
             <el-tabs v-model="activeName" @tab-click="handleClick">
                 <el-tab-pane label="数据报表" name="first">
                     <DataTab v-if="activeName == 'first'"></DataTab>
@@ -45,8 +46,20 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .curve{
         padding: 10px;
+        overflow: hidden;
+        height: 85vh;
+        overflow-y: scroll;
+    }
+    .no-scroll{
+        right: 0px !important;
+        top: -10px !important;
+        bottom: 0 !important;
+        position: absolute;
+        width: 17px;
+        background: #fff;
+        z-index: 1000;
     }
 </style>

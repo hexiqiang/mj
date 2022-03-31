@@ -8,6 +8,10 @@ export default new Vuex.Store({
     token: 'Bearer' + ' ' + sessionStorage.getItem('mtoken')
   },
   mutations: {
+    increment (state, token) {
+      // 变更状态
+      state.token = token
+    }
   },
   actions: {
   },

@@ -28,7 +28,7 @@
                                     <el-col :span="8"><i class="iconfont icon-dingwei"></i></el-col>
                                     <el-col :span="16">
                                         <div>{{item.project_name}}</div>
-                                        <div :class="{red: item.gateway_status == 1, green: item.gateway_status == 0}">{{item.gateway_status == 1 ? '在线' : '离线'}}</div>
+                                        <div :class="{red: item.status == 1, green: item.status == 0}">{{item.status == 1 ? '在线' : '离线'}}</div>
                                     </el-col>
                                 </div>
                             </el-col>
@@ -56,10 +56,10 @@
                         </div>
                         <div v-for="(item, index) in indexData.message" :key="item.id" class="text item">
                             <el-col :span="19">
-                                <el-col :span="3">{{(index+1) + '.'}}</el-col>
+                                <el-col :span="3" class="number-center">{{(index+1) + '.'}}</el-col>
                                 <el-col :span="18">{{ item.title }}</el-col>
                             </el-col>
-                            <el-col :span="4">{{ item.add_date.substr(5,5) }}</el-col>
+                            <el-col :span="4" class="number-center">{{ item.add_date.substr(5,5) }}</el-col>
                         </div>
                     </el-card>
                 </div>
@@ -147,7 +147,7 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" >
     .home-midden {
         .el-pagination{
             overflow: hidden;
@@ -288,6 +288,9 @@
             }
             border-radius: 6px;
             overflow: hidden;
+        }
+        .number-center{
+            text-align: center;
         }
     }
 </style>

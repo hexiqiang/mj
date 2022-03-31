@@ -1,9 +1,9 @@
 <template>
     <div id="online">
-        <el-col :span="24">
-            <el-col :span="24">
+        <el-col :span="24"  class="content-box">
+            <el-col :span="24"style="padding: 0px">
                 <el-form ref="form" v-model="form">
-                    <el-col :span="4">
+                    <el-col :span="24">
                         <el-select @change="selectProjects" v-model="form.peojects" placeholder="选择工程">
                             <el-option
                                     v-for="item in projects"
@@ -12,9 +12,7 @@
                                     :value="item.id">
                             </el-option>
                         </el-select>
-                    </el-col>
-                    <el-col :span="4">
-                        <el-button icon="el-icon-refresh" type="primary" align="right" @click="refresh">刷新</el-button>
+                        <el-button class="re-button" icon="el-icon-refresh" type="primary" align="right" @click="refresh">刷新</el-button>
                     </el-col>
                 </el-form>
             </el-col>
@@ -40,7 +38,6 @@
                                 @selection-change="handleSelectionChange"
                                 :default-sort = "{order: 'descending'}"
                                 tooltip-effect="dark">
-                            <el-table-column type="selection" width="55"></el-table-column>
                             <el-table-column prop="id" sortable label="序号">
                                 <template slot-scope="scope">
                                     {{ scope.$index + 1}}
@@ -50,7 +47,7 @@
                             <el-table-column prop="online_date" sortable  label="在线时间"></el-table-column>
                         </el-table>
                     </el-col>
-                    <el-col :span="24">
+                    <el-col :span="24"  class="page-box">
                         <el-pagination
                                 @size-change="handleSizeChange"
                                 @current-change="handleCurrentChange"
@@ -115,6 +112,7 @@
             },
             handleSizeChange(val) {
                 console.log(`每页 ${val} 条`);
+                this.tableData = [];
                 let offset = 0;
                 let limit = val;
                 this.offset = offset;
@@ -138,11 +136,13 @@
                 // console.log(this.form
                 this.offset= 0;
                 this.limit= 10;
+                this.tableData = [];
                 getProjectGateway({pid: val}).then(res => {
                     if(res.code == 0){
                         this.gateways = res.data;
-                        if (this.gateways.length == 1){
+                        if (this.gateways.length > 0){
                             this.gateway_id = this.gateways[0].id;
+                            this.selected = this.gateways[0].id
                             this.getLists(this.gateway_id, this.offset, this.limit)
                         }
                     }
@@ -160,6 +160,10 @@
             getProjectList().then(res => {
                 if (res.code == 0){
                     this.projects = res.data
+                    if (this.projects.length > 0){
+                        this.form.peojects = this.projects[0].id;
+                        this.selectProjects(this.projects[0].id)
+                    }
                 }
             })
         }
@@ -206,6 +210,9 @@
             }
 
         }
+    }
+    .re-button{
+        margin-left: 10px;
     }
 }
 </style>

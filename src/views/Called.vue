@@ -1,18 +1,18 @@
 <template>
     <div class="called">
-        <el-col :span="24">
-            <el-col :span="6">
+        <el-col :span="24" class="content-box">
+            <el-col :span="24">
                 <el-form ref="form" v-model="form">
-                    <el-col :span="18">
-                        <el-input v-model="form.keyword" placeholder="请输入搜索内容"></el-input>
-                    </el-col>
-                    <el-col :span="6">
-                    <el-button icon="el-icon-search" @click="search"></el-button>
-                    </el-col>
+                    <div class="top-form">
+                        <el-col :span="18">
+                            <el-input v-model="form.keyword" placeholder="请输入搜索内容"></el-input>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-button icon="el-icon-search" @click="search"></el-button>
+                        </el-col>
+                    </div>
                 </el-form>
-            </el-col>
-            <el-col :span="18">
-                <el-button type="primary" @click="dialogFormVisible = true">添加</el-button>
+                <el-button type="primary" @click="formData.pid='';dialogFormVisible = true">添加</el-button>
                 <el-button type="danger" @click="allDel">删除</el-button>
                 <el-button type="primary" @click="clickRefresh">刷新</el-button>
             </el-col>
@@ -62,7 +62,7 @@
                                     size="mini"
                                     type="danger"
                                     class="add-call"
-                                    @click="showTriggerForm(scope.row.id, scope.row.pid)">添加触发器</el-button>
+                                    @click="triggerForm.gid='';triggerForm.sid='';showTriggerForm(scope.row.id, scope.row.pid);">添加触发器</el-button>
                         </template>
                     </el-table-column>
                     <el-table-column type="expand">
@@ -71,7 +71,15 @@
                                 <el-table-column type="selection" width="55"></el-table-column>
                                 <el-table-column prop="gateway_name" sortable label="网关"></el-table-column>
                                 <el-table-column prop="stream_name" sortable label="数据流"></el-table-column>
-                                <el-table-column prop="equation" sortable width="120" label="等式"></el-table-column>
+                                <el-table-column prop="equation" sortable width="120" label="等式">
+                                    <template slot-scope="scope">
+                                        <div v-if="scope.row.equation == '>'">大于</div>
+                                        <div v-else-if="scope.row.equation == '>='">大于等于</div>
+                                        <div v-if="scope.row.equation == '<'">小于</div>
+                                        <div v-if="scope.row.equation == '<='">小于等于</div>
+                                        <div v-if="scope.row.equation == '=='">等于</div>
+                                    </template>
+                                </el-table-column>
                                 <el-table-column prop="threshold" sortable width="120" label="阀值"></el-table-column>
                                 <el-table-column prop="edit_date" sortable width="120" label="修改时间"></el-table-column>
                                 <el-table-column label="操作"  width="260">
@@ -91,7 +99,7 @@
                     </el-table-column>
                 </el-table>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="24" class="page-box">
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -108,7 +116,7 @@
                 <el-col :span="24">
                     <el-col :span="8">
                         <el-form-item label="工程"  :required="true">
-                            <el-select v-model="formData.pid" placeholder="选择工程">
+                            <el-select v-model="formData.pid"  placeholder="选择工程">
                                 <el-option
                                         v-for="(item, index) in options"
                                         :label="item.project_name"
@@ -190,11 +198,11 @@
                     <el-col :span="12">
                         <el-form-item label="等式"  :required="true">
                             <el-select v-model="triggerForm.equation" placeholder="选择等式">
-                                <el-option label="大于等于" value="大于等于"></el-option>
-                                <el-option label="小于等于" value="小于等于"></el-option>
-                                <el-option label="等于" value="等于"></el-option>
-                                <el-option label="大于" value="大于"></el-option>
-                                <el-option label="小于" value="小于"></el-option>
+                                <el-option label="大于等于" value=">="></el-option>
+                                <el-option label="小于等于" value="<="></el-option>
+                                <el-option label="等于" value="=="></el-option>
+                                <el-option label="大于" value=">"></el-option>
+                                <el-option label="小于" value="<"></el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -590,6 +598,16 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "../assets/css/called";
+.top-form{
+    width: 240px;
+    margin-right: 5px !important;
+    overflow: hidden;
+    float: left;
+}
+.called .el-col-24 .el-col-24{
+    margin: 0 !important;
+    margin-bottom: 16px !important;
+}
 </style>

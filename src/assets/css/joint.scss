@@ -18,6 +18,12 @@
         border-bottom-right-radius: 0;
       }
     }
+    .top-input{
+      input{
+        border-top-right-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+      }
+    }
     .el-button{
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
@@ -73,7 +79,7 @@
   }
   .el-table__row {
     .cell{
-      padding: 0;
+      padding: 0 !important;
       text-align: center;
       div:nth-child(2){
         border-top: 1px solid #EBEEF5;

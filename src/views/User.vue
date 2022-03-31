@@ -1,17 +1,18 @@
 <template>
     <div class="called user">
-        <el-col :span="24">
-            <el-col :span="6">
-                <el-form ref="form" v-model="form">
-                    <el-col :span="18">
-                        <el-input v-model="form.keyword" placeholder="请输入搜索内容"></el-input>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-button icon="el-icon-search" @click="searchUser"></el-button>
-                    </el-col>
-                </el-form>
-            </el-col>
-            <el-col :span="18">
+        <el-col :span="24"  class="content-box">
+            <el-col :span="24" class="content-box" style="margin-top: 0px;">
+                <div class="form-box">
+                    <el-form ref="form" v-model="form">
+                        <el-col :span="18">
+                            <el-input v-model="form.keyword" placeholder="请输入搜索内容"></el-input>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-button icon="el-icon-search" @click="searchUser"></el-button>
+                        </el-col>
+                    </el-form>
+                </div>
+
                 <el-button type="primary" @click="dialogForm">添加</el-button>
                 <el-button type="danger">删除</el-button>
                 <el-button type="primary" @click="clickRefresh">刷新</el-button>
@@ -89,7 +90,7 @@
                     </el-table-column>
                 </el-table>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="24"  class="page-box">
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -158,7 +159,7 @@
         <el-dialog v-if="setRuleForm.mid==rid" class="baojing" width="33%" title="权限管理" :visible.sync="ruleProject">
             <template>
                 <el-transfer
-                        :titles="['可选工程', '已选工程']"
+                        :titles="['可选工程', '已选不可操作工程']"
                         filterable
                         filter-placeholder="请输入"
                         v-model="val"
@@ -174,7 +175,7 @@
         <el-dialog v-if="setProForm.mid==pid" class="baojing" width="33%" title="工程管理" :visible.sync="userProject">
             <template>
                 <el-transfer
-                        :titles="['可选工程', '已选工程']"
+                        :titles="['可选工程', '已选可看工程']"
                         filterable
                         filter-placeholder="请输入"
                         v-model="value"
@@ -245,6 +246,7 @@
                     note: '',
                     password: '',
                     status: true,
+                    pid: sessionStorage.getItem('mid')
                     // _csrf: '',
                 },
                 rules: {
@@ -321,6 +323,17 @@
             },
             dialogForm(){
                 this.dialogFormVisible = true;
+                this.formData ={
+                    member: '',
+                    phone: '',
+                    is_admin: false,
+                    email: '',
+                    note: '',
+                    password: '',
+                    status: true,
+                    pid: sessionStorage.getItem('mid')
+                    // _csrf: '',
+                },
                 this.title = '添加用户';
             },
             clickRefresh(){
@@ -335,6 +348,7 @@
                 this.title = '编辑用户';
                 this.formData = row;
                 this.formData.id = row.id;
+                this.formData.password = row.show_password;
                 this.formData.is_admin = row.is_admin == '是' ? true : false;
                 console.log(this.formData);
             },
@@ -682,4 +696,10 @@
 
 <style lang="scss">
     @import "../assets/css/called";
+    .form-box{
+        overflow: hidden;
+        float: left;
+        width: 240px;
+        margin-right: 5px;
+    }
 </style>

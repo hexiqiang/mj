@@ -51,6 +51,7 @@
                         sessionStorage.setItem('mid',res.data.mid);
                         sessionStorage.setItem('username',res.data.member);
                         this.$message({type: 'success',message: res.msg});
+                        this.$store.commit('increment', 'Bearer' + ' ' + res.data.mtoken);
                         setTimeout(() => {
                             this.$router.push('/home')
                         },1000);

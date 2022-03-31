@@ -20,6 +20,11 @@ axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 // axios.defaults.headers.post['_csrf'] = store.state.csrf;
 // console.log(store.state.csrf)
 // 请求拦截器
+axios.create({
+    headers:{
+        Authorization: store.state.token
+    }
+});
 axios.interceptors.request.use(
     config => {
         // 每次发送请求之前判断是否存在token，如果存在，则统一在http请求的header都加上token，不用每次请求都手动添加了
@@ -49,10 +54,16 @@ axios.interceptors.response.use(
                 // 未登录则跳转登录页面，并携带当前页面的路径
                 // 在登录成功后返回当前页面，这一步需要在登录页操作。
                 case 401:
-                    router.replace({
-                        path: '/login',
-                        query: { redirect: router.currentRoute.fullPath }
-                    });
+                    // console.log(sessionStorage.getItem('mtoken'))
+                    if (sessionStorage.getItem('mtoken')){
+                        setTimeout(() => {
+                            window.location.href = window.location.href
+                        });
+
+                    } else{
+                        router.push('/login');
+                    }
+
                     break;
                 // 403 token过期
                 // 登录过期对用户进行提示
@@ -69,12 +80,7 @@ axios.interceptors.response.use(
                     // store.commit('loginSuccess', null);
                     // 跳转登录页面，并将要浏览的页面fullPath传过去，登录成功后跳转需要访问的页面
                     setTimeout(() => {
-                        router.replace({
-                            path: '/login',
-                            query: {
-                                redirect: router.currentRoute.fullPath
-                            }
-                        });
+                        router.push('/login');
                     }, 1000);
                     break;
                 // 404请求不存在
@@ -103,10 +109,10 @@ axios.interceptors.response.use(
  * @param {Object} params [请求时携带的参数]
  */
 export function get(url, params){
-    // Object.assign(params,{mid: sessionStorage.getItem('mid')})
+    console.log(params);
     return new Promise((resolve, reject) =>{
         axios.get(url, {
-            params: params
+            params: params,
         })
             .then(res => {
                 resolve(res.data);

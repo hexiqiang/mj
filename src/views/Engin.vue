@@ -1,9 +1,9 @@
 <template>
     <div class="engin">
-        <el-col :span="24">
-            <el-col :span="4">
+        <el-col :span="24"  class="content-box">
+            <el-col :span="24" class="top-form">
                 <el-form ref="form" v-model="form">
-                    <el-col :span="23">
+                    <div>
                         <el-select  icon="el-icon-search" v-model="form.keyword" filterable @change="searchProject" placeholder="搜索">
                             <el-option
                                     v-for="item in options"
@@ -12,13 +12,11 @@
                                     :value="item.id">
                             </el-option>
                         </el-select>
-                    </el-col>
+                    </div>
                 </el-form>
-            </el-col>
-            <el-col :span="20">
-                <el-button type="primary" @click="dialogFormVisible = true; title = '添加工程管理信息';">添加</el-button>
-                <el-button type="danger">删除</el-button>
-                <el-button type="primary" @click="clickRefresh">刷新</el-button>
+                <el-button class="bt-button" type="primary" @click="dialogFormVisible = true; title = '添加工程管理信息';">添加</el-button>
+                <el-button class="bt-button" type="danger">删除</el-button>
+                <el-button class="bt-button" type="primary" @click="clickRefresh">刷新</el-button>
             </el-col>
             <el-col :span="24">
                 <el-table
@@ -132,7 +130,7 @@
                     </el-table-column>
                 </el-table>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="24"  class="page-box">
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -186,7 +184,7 @@
                     </el-col>
                 </el-col>
                 <el-col :span="24">
-                    <el-form-item label="备注" >
+                    <el-form-item label="备注"  class="fa">
                         <el-input v-model="formData.note" autocomplete="off"></el-input>
                     </el-form-item>
                 </el-col>
@@ -497,7 +495,7 @@
                     this.$router.go(0);
                     this.$message({
                         type: 'info',
-                        message: '已取消删除'
+                        message: '已取消'
                     });
                 });
             },
@@ -800,4 +798,22 @@
 
 <style lang="scss">
     @import "../assets/css/Engin";
+    .engin form{
+        float: left;
+        margin-right: 10px;
+    }
+    .engin .el-form .el-input .el-input__inner{
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+    }
+    .top-form{
+        margin: 0 !important;
+    }
+
+    .fa {
+        .el-form-item__content{
+            width: 100% !important;
+        }
+    }
 </style>

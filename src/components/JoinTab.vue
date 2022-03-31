@@ -1,9 +1,9 @@
 <template>
     <!--数据报表-->
-    <div class="calltab"  v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="数据加载中">
-        <el-col :span="24">
+    <div class="calltab "  v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="数据加载中">
+        <el-col :span="24"  class="mb-0">
             <el-form ref="form" :model="form">
-                <el-col :span="3">
+                <el-col :span="24"  class="mb-0">
                     <template>
                         <el-select v-model="form.pid" filterable placeholder="请选择工程">
                             <el-option
@@ -14,8 +14,6 @@
                             </el-option>
                         </el-select>
                     </template>
-                </el-col>
-                <el-col :span="3">
                     <template>
                         <el-select v-model="form.days" filterable placeholder="请选择周期">
                             <el-option
@@ -26,11 +24,10 @@
                             </el-option>
                         </el-select>
                     </template>
-                </el-col>
-                <el-col :span="6">
                     <template>
                         <el-date-picker
                                 v-model="form.dates"
+                                class="select-dd"
                                 type="daterange"
                                 format="yyyy 年 MM 月 dd 日"
                                 value-format="yyyy-MM-dd"
@@ -39,8 +36,6 @@
                                 end-placeholder="结束日期">
                         </el-date-picker>
                     </template>
-                </el-col>
-                <el-col :span="1">
                     <el-button type="primary" @click="search">查询</el-button>
                 </el-col>
             </el-form>
@@ -166,7 +161,7 @@
                 form: {  pid: '', dates:'', days: '7' },
                 tableData: [],
                 lineData:{
-                    columns: ["日期", "条数"],
+                    columns: [],
                     rows: []
                 },
                 min:0,
@@ -187,6 +182,7 @@
             },
             search(){
                 this.lineData.rows = [];
+                this.lineData.columns = [];
                 this.min = 0;
                 this.max = 0;
                 this.agv = 0;
@@ -222,6 +218,7 @@
                         this.agv = res.data.agv;
                         this.section = res.data.section;
                         this.lineData.rows = res.data.rows;
+                        this.lineData.columns = res.data.label;
                         console.log(this.lineData)
                     }else{
                         this.$message('请稍后，服务器忙！')

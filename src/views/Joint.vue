@@ -1,20 +1,21 @@
 <template>
     <div class="joint">
-        <el-col :span="24">
-            <el-col :span="6">
-                <el-form ref="form" v-model="form">
-                    <el-col :span="18">
-                        <el-input v-model="form.keyword" placeholder="请输入搜索内容"></el-input>
-                    </el-col>
-                    <el-col :span="6">
-                        <el-button icon="el-icon-search" @click="search"></el-button>
-                    </el-col>
-                </el-form>
-            </el-col>
-            <el-col :span="18">
-                <el-button type="primary" @click="dialogFormVisible = true;title='新增联控管理信息'">添加</el-button>
-                <el-button type="danger">删除</el-button>
-                <el-button type="primary" @click="clickRefresh">刷新</el-button>
+        <el-col :span="24"  class="content-box">
+            <el-col :span="24" class="top-form-24">
+                <div  class="top-form">
+                    <el-form ref="form" v-model="form" >
+                        <el-col :span="18">
+                            <el-input v-model="form.keyword" placeholder="请输入搜索内容" class="top-input"></el-input>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-button icon="el-icon-search" @click="search"></el-button>
+                        </el-col>
+                    </el-form>
+                </div>
+
+                <el-button class="bt-button" type="primary" @click="dialogFormVisible = true;title='新增联控管理信息'">添加</el-button>
+                <el-button class="bt-button" type="danger">删除</el-button>
+                <el-button class="bt-button" type="primary" @click="clickRefresh">刷新</el-button>
             </el-col>
             <el-col :span="24">
                 <el-table
@@ -104,7 +105,7 @@
                     </el-table-column>
                 </el-table>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="24"  class="page-box">
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -343,8 +344,19 @@
                 this.multipleSelection = val;
             },
             handleEdit(index, row) {
-                console.log(index, row);
-                this.formData = row
+                this.formData = row;
+                var condition = this.formData.trigger_condition;
+                let len = condition.length;
+                for (let i = 0; i < len; i++){
+                    this.selectTriggerProject(condition[i].pid, i);
+                    this.selectTriggerGateway(condition[i].gid, i);
+                }
+                var orders = this.formData.issue_orders;
+                let olen = orders.length;
+                for (let j = 0; j < olen; j++){
+                    this.selectOrderProject(orders[j].pid, j);
+                    this.selectOrderGateway(orders[j].gid, j);
+                }
             },
             handleDelete(index, row) {
                 this.$confirm('此操作将永久删除该联控, 是否继续?', '提示', {
@@ -405,7 +417,15 @@
             },
             onAdd(){
                 if (this.formData.id) {
-
+                    editJoins(this.formData).then(res => {
+                        if (res.code == 0){
+                            this.dialogFormVisible = false;
+                            this.$message({message: res.msg, type: 'success'});
+                            this.clickRefresh()
+                        } else{
+                            this.$message({message: res.msg, type: 'warning'});
+                        }
+                    })
                 }else{
                     addJoins(this.formData).then(res => {
                         if (res.code == 0){
@@ -513,9 +533,22 @@
     }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     @import "../assets/css/joint";
+    .top-form-24{
+        margin: 0px !important;
+    }
     .first{
         padding: 10px;
     }
+    .top-form{
+        float: left;
+        overflow: hidden;
+        width: 240px;
+        margin-right: 5px !important;
+    }
+    .bt-button{
+        float: left;
+    }
+
 </style>

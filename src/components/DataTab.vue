@@ -1,9 +1,9 @@
 <template>
     <!--数据报表-->
     <div class="datatab" v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="数据加载中">
-        <el-col :span="24">
+        <el-col :span="24"  class="mb-0">
             <el-form ref="form" :model="form">
-                <el-col :span="3">
+                <el-col :span="24"  class="mb-0">
                     <template>
                         <el-select v-model="form.pid" @change="selectGateway" filterable placeholder="请选择工程">
                             <el-option
@@ -14,8 +14,6 @@
                             </el-option>
                         </el-select>
                     </template>
-                </el-col>
-                <el-col :span="3">
                 <template>
                     <el-select v-model="form.gid" @change="selectStream" filterable placeholder="请选择网关">
                         <el-option
@@ -26,8 +24,6 @@
                         </el-option>
                     </el-select>
                 </template>
-                </el-col>
-                <el-col :span="3">
                 <template>
                     <el-select v-model="form.sid" filterable placeholder="请选择数据流">
                         <el-option
@@ -38,8 +34,6 @@
                         </el-option>
                     </el-select>
                 </template>
-                </el-col>
-                <el-col :span="3">
                 <template>
                     <el-select v-model="form.days" filterable placeholder="请选择周期">
                         <el-option
@@ -50,10 +44,9 @@
                         </el-option>
                     </el-select>
                 </template>
-                </el-col>
-                <el-col :span="6">
                 <template>
                     <el-date-picker
+                            class="select-dd"
                             v-model="form.dates"
                             type="daterange"
                             format="yyyy 年 MM 月 dd 日"
@@ -63,10 +56,7 @@
                             end-placeholder="结束日期">
                     </el-date-picker>
                 </template>
-                </el-col>
-                <el-col :span="5">
                 <template>
-                    时间间隔
                     <el-select v-model="form.times" filterable placeholder="请选择时间间隔">
                         <el-option
                                 v-for="item in times"
@@ -76,8 +66,6 @@
                         </el-option>
                     </el-select>
                 </template>
-                </el-col>
-                <el-col :span="1">
                     <el-button type="primary" @click="search">查询</el-button>
                 </el-col>
             </el-form>
@@ -180,7 +168,7 @@
                 </el-table-column>
                 <el-table-column prop="status" label="状态" align="center"></el-table-column>
             </el-table>
-            <el-col :span="24">
+            <el-col :span="24"  class="page-box">
                 <el-pagination
                         @size-change="handleSizeChange"
                         @current-change="handleCurrentChange"
@@ -478,5 +466,12 @@
             top: 4px;
             z-index: 10000;
         }
+    }
+    .el-range-editor.select-dd{
+        margin-right: 10px;
+    }
+    .mb-0{
+        margin-bottom: 0px !important;
+        padding: 0px 5px!important;
     }
 </style>

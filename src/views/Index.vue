@@ -60,7 +60,9 @@
                     case 'setting':
                         break;
                     case 'out':
-                        sessionStorage.setItem('mtoken',null);
+                        sessionStorage.removeItem('mtoken');
+                        sessionStorage.removeItem('username');
+                        sessionStorage.removeItem('mid');
                         this.$router.push({path: '/login'})
                 }
             },

@@ -110,10 +110,10 @@
     }
   }
   .data-mon{
-    width: 40% !important;
+    //width: 40% !important;
     margin-top: 10px;
-    margin-left: 6.6666% !important;
-    .el-col-5{
+    //margin-left: 6.6666% !important;
+    .el-col-4{
       height: inherit;
       background: #2FA1ED;
       border-radius: 4px;
@@ -124,10 +124,10 @@
         line-height: 120px;
       }
     }
-    .el-col-19{
+    .el-col-20{
       height: inherit;
       box-sizing: border-box;
-      line-height: 57px;
+      line-height: 40px;
       text-indent: 2em;
       .el-col-24{
         margin: 0;
@@ -160,6 +160,9 @@
           }
         }
       }
+    }
+    .date-show{
+      line-height: 40px;
     }
   }
   .form-do{
